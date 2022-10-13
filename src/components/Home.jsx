@@ -1,87 +1,127 @@
 import React, {Component} from 'react';
 import SearchBar from './SearchBar'
 import './styles/Home.sass'
+import Table from "./Table";
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            summary: [],
-            variable_sentences: [],
-            loading: false
+            vadis_data: [{}, {}, {}, {}, {}],
+            loading: false,
+            ssoar_docs: [],
+            from: 0,
+            size: 5,
+            vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
+            outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?'
+
         };
+        this.getVariableResults = this.getVariableResults.bind(this)
         this.getResults = this.getResults.bind(this)
     }
 
-    getResults(id) {
+    getVariableResults(id, ind) {
         this.setState({
-            summary: [],
-            variable_sentences: [],
-            loading: true
+            loading: true,
+            button_id: ind
         })
-        let api_endpoint = 'http://193.175.238.92:8000/vadis_app?ssoar_id=' + id;
-        let myHeaders = new Headers();
-        myHeaders.append("Accept", "application/json");
-        // myHeaders.append("auth-key", "zusammen");
-
-        // let requestOptions = {
-        //     method: 'GET',
-        //     mode: 'no-cors',
-        //     // headers: myHeaders,
-        //     redirect: 'follow'
-        // };
-        // fetch(api_endpoint, requestOptions)
+        let api_endpoint = this.state.vadis_app_endpoint + id;
         fetch(api_endpoint)
             .then(response => response.json())
             .then(result => {
-                this.setState({
-                    summary: result['summary'],
-                    variable_sentences: result['variable_sentences'],
+                this.setState(({vadis_data}) => ({
+                    vadis_data: [
+                        ...vadis_data.slice(0, ind),
+                        {
+                            ...vadis_data[ind],
+                            result,
+                        },
+                        ...vadis_data.slice(ind + 1)
+                    ],
+                    loading: false
+                }));
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    getResults(id, from, size) {
+        this.setState({
+            ssoar_docs: [],
+            loading: true
+        })
+        let outcite_api_endpoint = id? this.state.outcite_ssoar_endpoint + 'q=_id:'+id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
+        fetch(outcite_api_endpoint)
+            .then(response => response.json())
+            .then(hits => {
+               this.setState({
+                    ssoar_docs: hits['hits']['hits'],
+                    from: from,
+                    size: size,
                     loading: false
                 })
             })
             .catch(error => console.log('error', error));
     }
 
+    clearView() {
+        this.setState({
+            vadis_data: [{}, {}, {}, {}, {}]
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevState.ssoar_docs !== this.state.ssoar_docs) {
+            this.clearView();
+        }
+    }
+
+    componentDidMount() {
+        this.getResults(null, 0, 5)
+    }
+
     render() {
         return (
-            <div className='row'>
-                <div className='d-flex justify-content-center'>
-                    <SearchBar placeholder={'Search by id...'} globalSearch getResults={this.getResults}/>
+            <>
+                <div className='row'>
+                    <div className='d-flex justify-content-center'>
+                        <SearchBar placeholder={'Search by id...'} globalSearch
+                                   // getVariableResults={this.getVariableResults}
+                                   getResults={this.getResults}
+                        />
+                    </div>
+
+                    {
+                        this.state.ssoar_docs.length?<div className='d-flex justify-content-center'>
+                        <Table ssoar_docs={this.state.ssoar_docs}
+                            vadis_data={this.state.vadis_data}
+                            getVariableResults={this.getVariableResults}
+                               loading={this.state.loading}
+                        />
+                    </div>
+                            :
+                            this.state.loading ?
+                                <div className="d-flex justify-content-center">
+                                    <div className="spinner-border clr-cadetblue" role="status">
+                                        {/*<span className="sr-only">Loading...</span>*/}
+                                    </div>
+                                </div>
+                                :
+                                null
+                    }
                 </div>
                 {
-                    this.state.summary.length ?
-                        <div className='d-flex justify-content-center'>
-                            <div className='card'>
-                                <p className='margin-text'>
-                                    <span
-                                        className='text-cadetblue'><b>Autogenerated Summary:</b></span> {this.state.summary}
-                                </p>
-                                {
-                                    this.state.variable_sentences.length ?
-                                        <div className='d-flex justify-content-center'>
-                                            <ul className='margin-text'><u className='text-cadetblue'>Variable Sentences:</u>
-                                                {this.state.variable_sentences.map((vars, ind) =>
-                                                    <li key={ind}> {vars}</li>
-                                                )}
-                                            </ul>
-                                        </div>
-                                        : null
-                                }
-                            </div>
-                        </div>
-                        :
-                        this.state.loading ?
-                            <div className="d-flex justify-content-center">
-                                <div className="spinner-border text-cadetblue" role="status">
-                                    {/*<span className="sr-only">Loading...</span>*/}
-                                </div>
-                            </div>
-                            :
-                            null
-                }
-            </div>
-
+                    this.state.ssoar_docs.length>1?
+                    <div className="d-flex justify-content-center">
+                    <button type="button" className="btn btn-link clr-cadetblue"
+                            onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo; </button>
+                    <button type="button" className="btn btn-link clr-cadetblue" disabled={this.state.from < 5}
+                            onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
+                    </button>
+                </div>:
+                        this.state.ssoar_docs.length===1?<button type="button" className="btn btn-link clr-cadetblue"
+                               onClick={() => this.getResults(null, 0, 5)}>&laquo; Back
+                        </button>:null}
+            </>
         );
     }
 }
