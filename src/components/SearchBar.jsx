@@ -22,7 +22,7 @@ class SearchBar extends Component {
                    aria-describedby="search-addon" onChange={this.handleChange}/>
             <button type="button" className="btn btn-outline-primary" onClick={() =>
                 this.state.input && this.props.globalSearch ?
-                    this.props.getResults('gesis-ssoar-' + this.state.input, null, null)
+                    this.props.getResults('gesis-ssoar-' + this.state.input, this.props.from, this.props.size)
             :
                 null
             }

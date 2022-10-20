@@ -8,56 +8,66 @@ class Home extends Component {
         super(props);
         this.state = {
             vadis_data: [{}, {}, {}, {}, {}],
-            loading: false,
+            loading: [false, false, false, false, false],
+            results_loading: false,
             ssoar_docs: [],
             from: 0,
             size: 5,
             vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
-            outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?'
+            outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
 
         };
         this.getVariableResults = this.getVariableResults.bind(this)
         this.getResults = this.getResults.bind(this)
+        this.updateStateArrayIndex = this.updateStateArrayIndex.bind(this)
+    }
+
+    updateStateArrayIndex(arr, ind, val){
+        return arr.map((old_val, i) => i === ind ? val : old_val)
     }
 
     getVariableResults(id, ind) {
+        let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, true)
         this.setState({
-            loading: true,
-            button_id: ind
-        })
+            loading : newLoadingArr
+        });
         let api_endpoint = this.state.vadis_app_endpoint + id;
         fetch(api_endpoint)
             .then(response => response.json())
             .then(result => {
-                this.setState(({vadis_data}) => ({
-                    vadis_data: [
-                        ...vadis_data.slice(0, ind),
-                        {
-                            ...vadis_data[ind],
-                            result,
-                        },
-                        ...vadis_data.slice(ind + 1)
-                    ],
-                    loading: false
-                }));
+                let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, false)
+                let newVadisArr = this.updateStateArrayIndex(this.state.vadis_data, ind, result)
+                this.setState({
+                    vadis_data: newVadisArr,
+                    loading: newLoadingArr
+                });
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                    let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, false)
+                    let newVadisArr = this.updateStateArrayIndex(this.state.vadis_data, ind, {'error': error})
+                    this.setState({
+                        loading: newLoadingArr,
+                        vadis_data: newVadisArr,
+                    });
+                    console.log('error', error)
+            }
+                );
     }
 
     getResults(id, from, size) {
         this.setState({
             ssoar_docs: [],
-            loading: true
+            results_loading: true
         })
-        let outcite_api_endpoint = id? this.state.outcite_ssoar_endpoint + 'q=_id:'+id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
+        let outcite_api_endpoint = id ? this.state.outcite_ssoar_endpoint + 'q=_id:' + id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
         fetch(outcite_api_endpoint)
             .then(response => response.json())
             .then(hits => {
-               this.setState({
+                this.setState({
                     ssoar_docs: hits['hits']['hits'],
                     from: from,
                     size: size,
-                    loading: false
+                    results_loading: false
                 })
             })
             .catch(error => console.log('error', error));
@@ -65,7 +75,8 @@ class Home extends Component {
 
     clearView() {
         this.setState({
-            vadis_data: [{}, {}, {}, {}, {}]
+            vadis_data: [{}, {}, {}, {}, {}],
+            loading: [false, false, false, false, false],
         })
     }
 
@@ -85,23 +96,24 @@ class Home extends Component {
                 <div className='row'>
                     <div className='d-flex justify-content-center'>
                         <SearchBar placeholder={'Search by id...'} globalSearch
-                                   // getVariableResults={this.getVariableResults}
-                                   getResults={this.getResults}
+                            // getVariableResults={this.getVariableResults}
+                                   getResults={this.getResults} from={this.state.from} size={this.state.size}
                         />
+
                     </div>
 
                     {
-                        this.state.ssoar_docs.length?<div className='d-flex justify-content-center'>
-                        <Table ssoar_docs={this.state.ssoar_docs}
-                            vadis_data={this.state.vadis_data}
-                            getVariableResults={this.getVariableResults}
-                               loading={this.state.loading}
-                        />
-                    </div>
+                        this.state.ssoar_docs.length ? <div className='d-flex justify-content-center'>
+                                <Table ssoar_docs={this.state.ssoar_docs}
+                                       vadis_data={this.state.vadis_data}
+                                       getVariableResults={this.getVariableResults}
+                                       loading={this.state.loading}
+                                />
+                            </div>
                             :
-                            this.state.loading ?
+                            this.state.results_loading?
                                 <div className="d-flex justify-content-center">
-                                    <div className="spinner-border clr-cadetblue" role="status">
+                                    <div className="spinner-border bg-color" role="status">
                                         {/*<span className="sr-only">Loading...</span>*/}
                                     </div>
                                 </div>
@@ -110,17 +122,21 @@ class Home extends Component {
                     }
                 </div>
                 {
-                    this.state.ssoar_docs.length>1?
-                    <div className="d-flex justify-content-center">
-                    <button type="button" className="btn btn-link clr-cadetblue"
-                            onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo; </button>
-                    <button type="button" className="btn btn-link clr-cadetblue" disabled={this.state.from < 5}
-                            onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
-                    </button>
-                </div>:
-                        this.state.ssoar_docs.length===1?<button type="button" className="btn btn-link clr-cadetblue"
-                               onClick={() => this.getResults(null, 0, 5)}>&laquo; Back
-                        </button>:null}
+                    this.state.ssoar_docs.length > 1?
+                        <div className="d-flex justify-content-center">
+                            <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                                    onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo; </button>
+                            <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5 || !this.state.loading.every(element => element === false)}
+                                    onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
+                            </button>
+                        </div>
+                        :
+                        this.state.ssoar_docs.length === 1 ? <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                                                                     onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
+                            </button>
+                            :
+                            null
+                }
             </>
         );
     }
