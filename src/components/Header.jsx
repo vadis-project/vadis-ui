@@ -1,6 +1,6 @@
 import {Component} from "react";
 import './styles/Header.sass'
-import vadis from '../images/vadis.PNG'
+import vadis from '../images/vadis-logo.PNG'
 
 class Header extends Component {
     render() {

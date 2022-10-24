@@ -47,29 +47,29 @@ class Table extends Component {
                             && Object.keys(this.props.vadis_data[ind]).length !== 0
                             && Object.getPrototypeOf(this.props.vadis_data[ind]) === Object.prototype ?
                                 !('error' in this.props.vadis_data[ind]) ?
-                                    // <Accordions result={this.props.vadis_data[ind]}/>
-                                    'summary' in this.props.vadis_data[ind] && this.props.vadis_data[ind]['summary'].length ?
-                                        <div className='d-flex justify-content-center'>
-                                            <div className='card'>
-                                                <p className='margin-text'>
-                                                    <i className='bg-color'><strong>Summary:</strong></i> {this.props.vadis_data[ind]['summary']}
-                                                </p>
-                                                {
-                                                    'variable_sentences' in this.props.vadis_data[ind] && this.props.vadis_data[ind]['variable_sentences'].length ?
-                                                        <div className='d-flex justify-content-center'>
-                                                            <ul className='margin-text'><i className='bg-color'>Variable
-                                                                Sentences:</i>
-                                                                {this.props.vadis_data[ind]['variable_sentences'].map((vars, ind) =>
-                                                                    <li key={ind}> {vars}</li>
-                                                                )}
-                                                            </ul>
-                                                        </div>
-                                                        : null
-                                                }
-                                            </div>
-                                        </div>
-                                        :
-                                        null
+                                    <Accordions result={this.props.vadis_data[ind]}/>
+                                    // 'summary' in this.props.vadis_data[ind] && this.props.vadis_data[ind]['summary'].length ?
+                                    //     <div className='d-flex justify-content-center'>
+                                    //         <div className='card'>
+                                    //             <p className='margin-text'>
+                                    //                 <i className='bg-color'><strong>Summary:</strong></i> {this.props.vadis_data[ind]['summary']}
+                                    //             </p>
+                                    //             {
+                                    //                 'variable_sentences' in this.props.vadis_data[ind] && this.props.vadis_data[ind]['variable_sentences'].length ?
+                                    //                     <div className='d-flex justify-content-center'>
+                                    //                         <ul className='margin-text'><i className='bg-color'>Variable
+                                    //                             Sentences:</i>
+                                    //                             {this.props.vadis_data[ind]['variable_sentences'].map((vars, ind) =>
+                                    //                                 <li key={ind}> {vars}</li>
+                                    //                             )}
+                                    //                         </ul>
+                                    //                     </div>
+                                    //                     : null
+                                    //             }
+                                    //         </div>
+                                    //     </div>
+                                    //     :
+                                    //     null
                                     : <div className='d-flex justify-content-center'>
                                         <span className='err-color'>
                                             Something Went Wrong!
