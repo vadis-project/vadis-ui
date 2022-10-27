@@ -27,8 +27,13 @@ class Table extends Component {
             {this.props.ssoar_docs.map((doc, ind) => (
                 <tr key={ind}>
                     <td className='row'>
-                        <h6 className='col-10'>{doc['_source']['title']}</h6>
-                        <a className='col-2 text-end bg-color'
+                        <div className='col-11'>
+                            <h6>
+                                {doc['_source']['title']}
+                                &nbsp; <span className="fw-lighter">[{doc['_id']}]</span>
+                            </h6>
+                        </div>
+                        <a className='col-1 text-end bg-color'
                            href={doc['_source']['pdf']}
                            target='_blank'
                            rel='noreferrer'>[source]</a>

@@ -13,6 +13,7 @@ class Home extends Component {
             ssoar_docs: [],
             from: 0,
             size: 5,
+            search_results: false,
             vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
             outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
 
@@ -20,10 +21,15 @@ class Home extends Component {
         this.getVariableResults = this.getVariableResults.bind(this)
         this.getResults = this.getResults.bind(this)
         this.updateStateArrayIndex = this.updateStateArrayIndex.bind(this)
+        this.isNumeric = this.isNumeric.bind(this)
     }
 
     updateStateArrayIndex(arr, ind, val){
         return arr.map((old_val, i) => i === ind ? val : old_val)
+    }
+
+    isNumeric(value) {
+        return /^\d+$/.test(value);
     }
 
     getVariableResults(id, ind) {
@@ -54,12 +60,16 @@ class Home extends Component {
                 );
     }
 
-    getResults(id, from, size) {
+    getResults(q, from, size) {
+        q = q? this.isNumeric(q)? 'gesis-ssoar-' + q : q.replace(/[;&\/\\#,+()$~%.'":*?<>{}]/g, '') : null;
         this.setState({
             ssoar_docs: [],
-            results_loading: true
+            results_loading: true,
+            search_results: !!q,
         })
-        let outcite_api_endpoint = id ? this.state.outcite_ssoar_endpoint + 'q=_id:' + id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
+        let outcite_api_endpoint = q? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"bool":{"must":[{"term":{"has_fulltext":true}},{"exists":{"field":"abstract"}}]}}}&from=' + from + '&size=' + size
+        // let outcite_api_endpoint = q ? this.state.outcite_ssoar_endpoint + 'q=title:"' + q + '" OR abstract:"' + q + '" OR _id:"' + q + '"&from=' + from + '&size=' + size : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
+        // let outcite_api_endpoint = id ? this.state.outcite_ssoar_endpoint + 'q=_id:' + id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
         fetch(outcite_api_endpoint)
             .then(response => response.json())
             .then(hits => {
@@ -95,8 +105,9 @@ class Home extends Component {
             <>
                 <div className='row'>
                     <div className='d-flex justify-content-center'>
-                        <SearchBar placeholder={'Search by id...'} globalSearch
+                        <SearchBar placeholder={'Search query...'} globalSearch
                             // getVariableResults={this.getVariableResults}
+                            loading={this.state.loading}
                                    getResults={this.getResults} from={this.state.from} size={this.state.size}
                         />
 
@@ -122,16 +133,18 @@ class Home extends Component {
                     }
                 </div>
                 {
-                    this.state.ssoar_docs.length > 1?
+                    this.state.ssoar_docs.length > 1 && !this.state.search_results?
                         <div className="d-flex justify-content-center">
-                            <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
-                                    onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo; </button>
                             <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5 || !this.state.loading.every(element => element === false)}
                                     onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
                             </button>
+                            <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                                    onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
+                            </button>
                         </div>
                         :
-                        this.state.ssoar_docs.length === 1 ? <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                        // this.state.ssoar_docs.length === 1
+                            this.state.search_results && !this.state.results_loading? <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
                                                                      onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
                             </button>
                             :

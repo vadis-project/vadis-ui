@@ -5,7 +5,7 @@ import vadis from '../images/vadis-logo.PNG'
 class Header extends Component {
     render() {
         return <div className="row justify-content-center header">
-            <img className='w-75' src={vadis} alt="vadis"/>
+            <img src={vadis} alt="vadis"/>
         </div>;
     }
 }
