@@ -61,7 +61,7 @@ class Home extends Component {
     }
 
     getResults(q, from, size) {
-        q = q? this.isNumeric(q)? 'gesis-ssoar-' + q : q.replace(/[;&\/\\#,+()$~%.'":*?<>{}]/g, '') : null;
+        q = q? this.isNumeric(q)? 'gesis-ssoar-' + q : q.replace(/[;&/\\#,+()$~%.'":*?<>{}]/g, '') : null;
         this.setState({
             ssoar_docs: [],
             results_loading: true,
