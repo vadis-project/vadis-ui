@@ -37,6 +37,15 @@ class Table extends Component {
                            href={doc['_source']['pdf']}
                            target='_blank'
                            rel='noreferrer'>[source]</a>
+
+                        <div className='col-12 small-txt'>
+                            {'authors' in doc['_source']? doc['_source']['authors'].map((author, i) => (
+                                <span className="fw-light" key={i}>
+                                    <i> &#x2022; {author['name_string']} </i>
+                                </span>
+                            )): null}
+                        </div>
+
                         <div className='col-12 small-txt align-txt'>
                             <ShowMoreText width={0} lines={2} anchorClass='show-more-less-clickable bg-color'>
                                 {doc['_source']['abstract']}
