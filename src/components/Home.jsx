@@ -15,6 +15,7 @@ class Home extends Component {
             size: 5,
             search_results: false,
             vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
+            // vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
             outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
 
         };
@@ -102,7 +103,6 @@ class Home extends Component {
 
     render() {
         return (
-            <>
                 <div className='row'>
                     <div className='d-flex justify-content-center'>
                         <SearchBar placeholder={'Search query...'} globalSearch
@@ -131,26 +131,30 @@ class Home extends Component {
                                 :
                                 null
                     }
-                </div>
-                {
-                    this.state.ssoar_docs.length > 1 && !this.state.search_results?
-                        <div className="d-flex justify-content-center">
-                            <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5 || !this.state.loading.every(element => element === false)}
-                                    onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
-                            </button>
-                            <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
-                                    onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
-                            </button>
-                        </div>
-                        :
-                        // this.state.ssoar_docs.length === 1
-                            this.state.search_results && !this.state.results_loading? <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
-                                                                     onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                            </button>
+                    {
+                        this.state.ssoar_docs.length > 1 && !this.state.search_results?
+                            <div className="d-flex justify-content-center">
+                                <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5 || !this.state.loading.every(element => element === false)}
+                                        onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
+                                </button>
+                                <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                                        onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
+                                </button>
+                            </div>
                             :
-                            null
-                }
-            </>
+                            // this.state.ssoar_docs.length === 1
+
+                            this.state.search_results && !this.state.results_loading?
+                                <div className="d-flex justify-content-center">
+                                    <button type="button" className="btn btn-link bg-color" disabled={!this.state.loading.every(element => element === false)}
+                                                                                              onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
+                                    </button>
+                                </div>
+                                :
+                                null
+                    }
+                </div>
+
         );
     }
 }

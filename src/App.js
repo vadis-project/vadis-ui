@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Header from './components/Header';
 import Home from "./components/Home";
+import Footers from "./components/Footers";
 
 class App extends Component {
   // constructor(props) {
@@ -14,7 +15,9 @@ class App extends Component {
         <div className="container">
             <Header/>
             <Home/>
-
+            <div className='row footers'>
+                <Footers/>
+            </div>
         </div>
     );
   }
