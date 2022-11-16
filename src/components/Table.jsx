@@ -52,7 +52,8 @@ class Table extends Component {
                             </ShowMoreText>
                         </div>
                         <div className='d-flex justify-content-center'>
-                            <button type="button" className="btn btn-link bg-color" id={ind}
+                            <button type="button" className="btn btn-link bg-color" id={ind} disabled={!!(this.props.vadis_data[ind] && Object.keys(this.props.vadis_data[ind]).length !== 0
+                                && Object.getPrototypeOf(this.props.vadis_data[ind]) === Object.prototype)}
                                     onClick={() => this.handleClick(doc['_id'].split('-')[2], ind)}>Get Variables Data!
                             </button>
                         </div>
