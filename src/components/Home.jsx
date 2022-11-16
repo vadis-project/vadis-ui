@@ -14,10 +14,10 @@ class Home extends Component {
             from: 0,
             size: 5,
             search_results: false,
-            // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
-            vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
-            // outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
-            outcite_ssoar_endpoint: 'https://demo-vadis.gesis.org/outcite_ssoar/_search?',
+            vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
+            // vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
+            outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
+            // outcite_ssoar_endpoint: 'https://demo-vadis.gesis.org/outcite_ssoar/_search?',
 
         };
         this.getVariableResults = this.getVariableResults.bind(this)
