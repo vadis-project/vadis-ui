@@ -33,10 +33,13 @@ class Table extends Component {
                                 &nbsp; <span className="fw-lighter">[{doc['_id']}]</span>
                             </h6>
                         </div>
-                        <a className='col-1 text-end bg-color'
-                           href={doc['_source']['pdf']}
-                           target='_blank'
-                           rel='noreferrer'>[source]</a>
+                        {'url' in doc['_source'] ? <a className='col-1 text-end bg-color'
+                                                      href={doc['_source']['url']}
+                                                      target='_blank'
+                                                      rel='noreferrer'>[source]</a>
+                            :
+                            null
+                        }
 
                         <div className='col-12 small-txt'>
                             {'authors' in doc['_source']? doc['_source']['authors'].map((author, i) => (
