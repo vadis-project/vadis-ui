@@ -44,7 +44,7 @@ class Table extends Component {
                         <div className='col-12 small-txt'>
                             {'authors' in doc['_source']? doc['_source']['authors'].map((author, i) => (
                                 <span className="fw-light" key={i}>
-                                    <i> &#x2022; {author['name_string']} </i>
+                                    <i> &#x2022; {'name' in author?author['name']:author['name_string']} </i>
                                 </span>
                             )): null}
                         </div>
