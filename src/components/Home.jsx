@@ -68,8 +68,8 @@ class Home extends Component {
 
     getResults(q, from, size) {
         // if (Object.keys(this.state.ssoar_ids_list).length!==0){
-            // let docIds=this.state.ssoar_ids_list['ids'].slice(from, from+size)
-            let docIds = idsList['ids'].slice(from, from + size)
+            let docIds=this.state.ssoar_ids_list['ids'].slice(from, from+size)
+            // let docIds = idsList['ids'].slice(from, from + size)
             let strDocIds = []
             docIds.forEach((id, i) => {
                 strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
@@ -114,19 +114,19 @@ class Home extends Component {
     }
 
     async componentDidMount() {
-        // await fetch(this.state.vadis_app_ssoar_list_endpoint)
-        //     .then(response => response.json())
-        //     .then(result => {
-        //         this.setState({
-        //             ssoar_ids_list: result,
-        //         })
-        //     })
-        //     .catch(error => console.log('error', error));
+        await fetch(this.state.vadis_app_ssoar_list_endpoint)
+            .then(response => response.json())
+            .then(result => {
+                this.setState({
+                    ssoar_ids_list: result,
+                })
+            })
+            .catch(error => console.log('error', error));
 
-        // if (Object.keys(this.state.ssoar_ids_list).length!==0){
-        //     this.getResults(null, 0, 5)
-        // }
-        this.getResults(null, 0, 5)
+        if (Object.keys(this.state.ssoar_ids_list).length!==0){
+            this.getResults(null, 0, 5)
+        }
+        // this.getResults(null, 0, 5)
 
     }
 

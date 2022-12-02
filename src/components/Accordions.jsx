@@ -24,7 +24,11 @@ class Accordions extends Component {
                         typeof res[1] === 'string' || res[1] instanceof String || !isNaN(res[1])?
                         //             res[0] !== 'score' ?
                                     <AccordionItem className='col-12' key={res_ind}>
-                                        <span><b className='bg-color'>{res[0] + ': '}</b>{res[1]}</span>
+                                        {/*{res[0]!=='sentence'?*/}
+                                            <span><b className='bg-color'>{res[0] + ': '}</b>{res[1]}</span>
+                                        {/*    :*/}
+                                        {/*    null*/}
+                                        {/*}*/}
                                     </AccordionItem>
                                     // :
                                     //    null
@@ -34,6 +38,7 @@ class Accordions extends Component {
                                     <AccordionItem className='col-12' key={res_ind}>
                                         <AccordionItemHeading>
                                             <AccordionItemButton className='accordion__button'>
+                                                {/*{res[0].includes('sentence_')?res[1]['sentence']:res[0]}*/}
                                                 {res[0]}
                                             </AccordionItemButton>
                                         </AccordionItemHeading>
