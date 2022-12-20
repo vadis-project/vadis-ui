@@ -9,174 +9,88 @@ import {
 // Demo styles, see 'Styles' section below for some notes on use.
 import 'react-accessible-accordion/dist/fancy-example.css';
 import './styles/Accordions.sass'
+import './styles/Icon.sass'
+import Icon from "./Icon";
+
+let range_value = 2; // set global variable due to recursive call of the component, and it changes state to initial value on each call
 
 class Accordions extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            range_changed: false,
+        };
+
+        this.handleChange = this.handleChange.bind(this)
+    }
+
+    handleChange(event) {
+        this.setState({range_changed: !this.state.range_changed});
+        range_value = Number(event.target.value)
     }
 
     render() {
         return (
-            <Accordion className={this.props.children?'row r-margin':'row'} allowMultipleExpanded allowZeroExpanded>
+            <Accordion className={this.props.children ? 'row r-margin' : 'row'} allowMultipleExpanded allowZeroExpanded>
                 {
                     Object.entries(this.props.result).map((res, res_ind) => (
-                        // typeof res[1] === 'string' || res[1] instanceof String?
-                        typeof res[1] === 'string' || res[1] instanceof String || !isNaN(res[1])?
-                        //             res[0] !== 'score' ?
-                                    <AccordionItem className='col-12' key={res_ind}>
-                                        {/*{res[0]!=='sentence'?*/}
-                                            <span><b className='bg-color'>{res[0] + ': '}</b>{res[1]}</span>
-                                        {/*    :*/}
-                                        {/*    null*/}
-                                        {/*}*/}
-                                    </AccordionItem>
-                                    // :
-                                    //    null
-                            :
-                            typeof res[1] === 'object' && Object.keys(res[1]).length !== 0 && !Array.isArray(res[1]) && res[1] !== null?
-                                // res_ind<3?
-                                    <AccordionItem className='col-12' key={res_ind}>
-                                        <AccordionItemHeading>
-                                            <AccordionItemButton className='accordion__button'>
-                                                {/*{res[0].includes('sentence_')?res[1]['sentence']:res[0]}*/}
-                                                {res[0]}
-                                            </AccordionItemButton>
-                                        </AccordionItemHeading>
-                                        <AccordionItemPanel className='panel-bg-clr'>
-                                            <Accordions result={res[1]} children/>
-                                        </AccordionItemPanel>
-                                    </AccordionItem>
-                                    // :
-                                    // Object.entries(res[1]).map((rds, rds_ind) => (
-                                    //     <AccordionItem className='col' key={rds_ind}>
-                                    //         <span><b className='margin-text bg-color'>{rds[0] + ': '}</b>{JSON.stringify(rds[1])}</span>
-                                    //         {/*<AccordionItemHeading>*/}
-                                    //         {/*    <AccordionItemButton className='accordion__button'>*/}
-                                    //         {/*        {rds[0] + )}*/}
-                                    //         {/*    </AccordionItemButton>*/}
-                                    //         {/*</AccordionItemHeading>*/}
-                                    //         {/*<AccordionItemPanel className='panel-bg-clr'>*/}
-                                    //         {/*    <Accordions result={rds[1]} children/>*/}
-                                    //         {/*</AccordionItemPanel>*/}
-                                    //     </AccordionItem>
-                                    // ))
+                            // typeof res[1] === 'string' || res[1] instanceof String?
+                            typeof res[1] === 'string' || res[1] instanceof String || !isNaN(res[1]) ?
+                                // res[0] !== 'score' ?
+                                <AccordionItem className='col-12 txt-margin' key={res_ind}>
+                                    {res[0] === 'summary' ?
+                                        <span>
+                                            <b className='bg-color'>{res[0] + ': '}</b>{res[1]}<br/>
 
+
+                                            {/*   <a className='btn dropdown-toggle rt-icon bg-color'*/}
+                                            {/*      id="dropdownFilter" data-bs-toggle="dropdown" aria-expanded="false"*/}
+                                            {/*      // href='https://demo-vadis.gesis.org:443/'*/}
+                                            {/*      rel='noreferrer'><Icon iconName='Filter' size='lg'/>*/}
+                                            {/*   </a>*/}
+                                            {/*<ul className="dropdown-menu" aria-labelledby="dropdownFilter">*/}
+                                            {/*  <li><a className="dropdown-item" href="#">Action</a></li>*/}
+                                            {/*  <li><a className="dropdown-item" href="#">Another action</a></li>*/}
+                                            {/*  <li><a className="dropdown-item" href="#">Something else here</a></li>*/}
+                                            {/*</ul>*/}
+                                            </span>
+                                        :
+                                        <span>
+                                            <b className='bg-color'>{res[0] + ': '}</b>{res[1]}
+                                            </span>
+                                    }
+                                </AccordionItem>
                                 :
-                                null
+                                typeof res[1] === 'object' && Object.keys(res[1]).length !== 0 && !Array.isArray(res[1]) && res[1] !== null ?
+                                    !('score' in res[1]) || ('score' in res[1] && Number(res[1]['score']) <= range_value) ?
+                                        <AccordionItem className='col-12' key={res_ind}>
+                                            {/*{!('score' in res[1])?*/}
+                                            {/*    <span className="range-clr rt-icon">*/}
+                                            {/*        <label htmlFor="score">Slide to filter sentences by score (Min: 0, Max: 2, Current: {range_value})</label> &nbsp;*/}
+                                            {/*        <input type="range" id="score" name="score" min="0" max="2" step="0.5"*/}
+                                            {/*               defaultValue={range_value} onChange={this.handleChange}/>*/}
+                                            {/*        /!*<output>{range_value}</output>*!/*/}
+                                            {/*    </span>*/}
+                                            {/*    :*/}
+                                            {/*    null*/}
+                                            {/*}*/}
+                                            <AccordionItemHeading>
+                                                <AccordionItemButton className='accordion__button'>
+                                                    {res[0]}
+                                                </AccordionItemButton>
+                                            </AccordionItemHeading>
+                                            <AccordionItemPanel className='panel-bg-clr'>
+                                                <Accordions result={res[1]} children/>
+                                            </AccordionItemPanel>
+                                        </AccordionItem>
+                                        :
+                                        null
+                                    :
+                                    null
                         )
                     )
                 }
             </Accordion>
-            // <Accordion className='row' allowMultipleExpanded allowZeroExpanded>
-            //     {
-            //         Object.entries(this.props.result).map((res, res_ind) => (
-            //             // console.log(Object.hasOwn(this.props.result, 'summary')),
-            //                 res[1]? <AccordionItem className={this.props.children?'col-12':'col-6'} key={res_ind}>
-            //             {/*res[1].length ? <AccordionItem className='col' key={res_ind}>*/}
-            //                 <AccordionItemHeading>
-            //                     <AccordionItemButton className='accordion__button'>
-            //                         {res[0]}
-            //                     </AccordionItemButton>
-            //                 </AccordionItemHeading>
-            //                 <AccordionItemPanel className='panel-bg-clr'>
-            //                     {
-            //                         typeof res[1] === 'object' && !Array.isArray(res[1]) && res[1] !== null?
-            //                             <Accordion allowMultipleExpanded allowZeroExpanded>
-            //                                 { Object.entries(res[1]).map((vars, vars_ind) =>
-            //                                 <AccordionItem key={vars_ind}>
-            //                                     <AccordionItemHeading>
-            //                                         <AccordionItemButton>
-            //                                             {vars[0]}
-            //                                         </AccordionItemButton>
-            //                                     </AccordionItemHeading>
-            //                                     <AccordionItemPanel>
-            //                                         {typeof vars[1] === 'object' && !Array.isArray(vars[1]) && vars[1] !== null?
-            //                                             <Accordion allowMultipleExpanded allowZeroExpanded>
-            //                                             {Object.entries(vars[1]).map((sents, sents_ind) =>
-            //                                                     typeof sents[1] === 'string' || sents[1] instanceof String || !isNaN(sents[1])?
-            //                                                         sents[0]!=='score'?
-            //                                                             <AccordionItem key={sents_ind}>
-            //                                                                 <span><b>{sents[0] + ': ' }</b>{sents[1]}</span>
-            //                                                             </AccordionItem>
-            //                                                             :
-            //                                                             null
-            //                                                         :
-            //                                                         <AccordionItem key={sents_ind}>
-            //                                                         <AccordionItemHeading>
-            //                                                             <AccordionItemButton>
-            //                                                                 {sents[0]}
-            //                                                             </AccordionItemButton>
-            //                                                         </AccordionItemHeading>
-            //                                                             <AccordionItemPanel>
-            //                                                                 {
-            //                                                                     typeof sents[1] === 'object' && !Array.isArray(sents[1]) && sents[1] !== null ?
-            //                                                                         <Accordion allowMultipleExpanded allowZeroExpanded>
-            //                                                                             {Object.entries(sents[1]).map((sen, sen_ind) =>
-            //                                                                                     typeof sen[1] === 'string' || sen[1] instanceof String || !isNaN(sen[1])?
-            //                                                                                         sen[0]!=='score'?
-            //                                                                                             <AccordionItem key={sen_ind}>
-            //                                                                                                 <span><b>{sen[0] + ': ' }</b>{sen[1]}</span>
-            //                                                                                             </AccordionItem>
-            //                                                                                             :
-            //                                                                                             null
-            //                                                                                         :
-            //                                                                                             <AccordionItem key={sen_ind}>
-            //                                                                                             <AccordionItemHeading>
-            //                                                                                                 <AccordionItemButton>
-            //                                                                                                     {sen[0]}
-            //                                                                                                 </AccordionItemButton>
-            //                                                                                             </AccordionItemHeading>
-            //                                                                                             <AccordionItemPanel>
-            //                                                                                                 <Accordions
-            //                                                                                                     result={sen[1]}
-            //                                                                                                     children/>
-            //                                                                                             </AccordionItemPanel>
-            //                                                                                             </AccordionItem>
-            //                                                                             )}
-            //                                                                         </Accordion>
-            //                                                                         :
-            //                                                                         <p className='margin-text'>
-            //                                                                             {sents[1]}
-            //                                                                         </p>
-            //
-            //                                                                 }
-            //                                                             </AccordionItemPanel>
-            //                                                         </AccordionItem>
-            //                                             )}
-            //                                         </Accordion>
-            //                                         :
-            //                                             <p className='margin-text'>
-            //                                                 {vars[1]}
-            //                                             </p>
-            //                                         }
-            //                                         {/*<Accordions result={vars[1]} children/>*/}
-            //                                     </AccordionItemPanel>
-            //                                 </AccordionItem>
-            //                             )}
-            //                             </Accordion>
-            //
-            //                             // <Accordions result={res[1]} children/>
-            //                             // Object.entries(res[1]).map((vars, ind) =>
-            //                             //     <Accordions key={ind} result={vars}/>
-            //                             // )
-            //                         // res[1].length > 1 ?
-            //                         //     <ul className='margin-text'>
-            //                         //         {/*<u className='bg-color'>Variable Sentences:</u>*/}
-            //                         //         {res[1].map((vars, ind) =>
-            //                         //             <li key={ind}> {vars}</li>
-            //                         //         )}
-            //                         //     </ul>
-            //                             :
-            //                             <p className='margin-text'>
-            //                                 {/*<span className='bg-color'><b>Autogenerated Summary: </b></span>*/}
-            //                                 {res[1]}
-            //                             </p>
-            //                     }
-            //                 </AccordionItemPanel>
-            //             </AccordionItem> : null
-            //         ))
-            //     }
-            // </Accordion>
         );
     }
 }

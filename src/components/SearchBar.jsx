@@ -25,7 +25,8 @@ class SearchBar extends Component {
             <input type="search" className="form-control rounded" placeholder={this.props.placeholder}
                    aria-label="Search"
                    aria-describedby="search-addon" onChange={this.handleChange}/>
-            <button type="button" className="btn btn-outline-primary" disabled={!this.props.loading.every(element => element === false)}
+            <button type="button" className="btn btn-outline-primary"
+                    // disabled={!this.props.loading.every(element => element === false)}
                     onClick={() =>
                 this.state.input && this.props.globalSearch ?
                     // this.isNumeric(this.state.input) ? this.props.getResults('gesis-ssoar-' + this.state.input, this.props.from, this.props.size)
