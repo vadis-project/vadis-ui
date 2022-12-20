@@ -167,7 +167,7 @@ class Home extends Component {
                                    // vadis_data={this.props.params.id && !this.state.search_results? this.state.vadis_data : null}
                                 // getVariableResults={this.getVariableResults}
                                    loading={this.state.loading}
-                                   getId={this.props.getId}
+                                   getParams={this.props.getParams}
                                    detailedView={!!this.props.params.id && !this.state.search_results}
                                    // detailedView={!!this.props.params.id && (this.props.vadis_data && Object.keys(this.props.vadis_data).length !== 0
                                    // && Object.getPrototypeOf(this.props.vadis_data) === Object.prototype)}
@@ -204,7 +204,7 @@ class Home extends Component {
                                 <button type="button" className="btn btn-link bg-color"
                                     // disabled={!this.state.loading.every(element => element === false)}
                                         onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                                    {/*onClick={() => this.props.getId(null)}>&laquo; Back*/}
+                                    {/*onClick={() => this.props.getParams(null)}>&laquo; Back*/}
                                 </button>
                             </div>
                             :
@@ -213,7 +213,7 @@ class Home extends Component {
                                     <button type="button" className="btn btn-link bg-color"
                                         // disabled={!this.state.loading.every(element => element === false)}
                                         //     onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                                            onClick={() => this.props.getId(null)}>&laquo; Back
+                                            onClick={() => this.props.getParams(null)}>&laquo; Back
                                     </button>
                                 </div>
                                 :

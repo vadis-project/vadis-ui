@@ -19,7 +19,7 @@ class Table extends Component {
             button_id: ind
         })
         // this.props.getVariableResults(id, ind)
-        this.props.getId(id)
+        this.props.getParams(id)
     }
 
     render() {

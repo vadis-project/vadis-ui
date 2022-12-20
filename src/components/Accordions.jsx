@@ -41,18 +41,11 @@ class Accordions extends Component {
                                     {res[0] === 'summary' ?
                                         <span>
                                             <b className='bg-color'>{res[0] + ': '}</b>{res[1]}<br/>
-
-
                                             {/*   <a className='btn dropdown-toggle rt-icon bg-color'*/}
                                             {/*      id="dropdownFilter" data-bs-toggle="dropdown" aria-expanded="false"*/}
                                             {/*      // href='https://demo-vadis.gesis.org:443/'*/}
                                             {/*      rel='noreferrer'><Icon iconName='Filter' size='lg'/>*/}
                                             {/*   </a>*/}
-                                            {/*<ul className="dropdown-menu" aria-labelledby="dropdownFilter">*/}
-                                            {/*  <li><a className="dropdown-item" href="#">Action</a></li>*/}
-                                            {/*  <li><a className="dropdown-item" href="#">Another action</a></li>*/}
-                                            {/*  <li><a className="dropdown-item" href="#">Something else here</a></li>*/}
-                                            {/*</ul>*/}
                                             </span>
                                         :
                                         <span>

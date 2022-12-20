@@ -15,7 +15,7 @@ class App extends Component {
             ssoar_ids_list: {},
             vadis_app_ssoar_list_endpoint: 'https://demo-vadis.gesis.org/ssoar_list'
         }
-        this.getId=this.getId.bind(this)
+        this.getParams=this.getParams.bind(this)
     }
 
     componentDidMount() {
@@ -29,67 +29,38 @@ class App extends Component {
             .catch(error => console.log('error', error));
     }
 
-    getId(id) {
+    getParams(id) {
         this.setState({
             id: id,
         })
         if (id && id !== 'null') {
-            window.open('http://localhost:3000/' + id, '_blank')
-            // console.log(id)
+            // window.open('http://localhost:3000/' + id, '_blank')
+            window.open('https://demo-outcite.gesis.org:443/' + id, '_blank')
         }
         else{
-            window.open('http://localhost:3000/', '_self')
+            // window.open('http://localhost:3000/', '_self')
+            window.open('https://demo-outcite.gesis.org:443/', '_self')
         }
-        // else if (id && id !== 'null') {
-        //     window.open('http://localhost:3000/' + index + '/' + id, '_blank')
-        // } else {
-        //     window.open('http://localhost:3000/', '_blank')
-        // }
-        // if (field && field !== 'null') {
-        //     window.open('https://demo-outcite.gesis.org:443/' + index + '/' + id + '/' + field, '_blank')
-        // } else if (id && id !== 'null') {
-        //     window.open('https://demo-outcite.gesis.org:443/' + index + '/' + id, '_blank')
-        // } else {
-        //     window.open('https://demo-outcite.gesis.org:443/', '_blank')
-        // }
-
-
     }
 
     render() {
-        // console.log(this.state._id)
         return (
             <div className="container">
                 <Header/>
                 <BrowserRouter>
                     <div>
                         <Routes>
-                            <Route path="/" element={
-                                    // {
-                                        'ids' in this.state.ssoar_ids_list && this.state.ssoar_ids_list['ids'].length !== 0 ?
-                                            <Home idsList={this.state.ssoar_ids_list['ids']} getId={this.getId}/>
+                            <Route path="/" element={'ids' in this.state.ssoar_ids_list && this.state.ssoar_ids_list['ids'].length !== 0 ?
+                                            <Home idsList={this.state.ssoar_ids_list['ids']} getParams={this.getParams}/>
                                             :
-                                            null
-                                    // }
-                                    // <div className='row footers'>
-                                    //     <Footers/>
-                                    // </div>
-                            }
-                            />
-                            <Route path="/:id" element={<Home getId={this.getId}/>}/>
-                            {/*<Route path="/:index/:id" element={<><Header showHomeBtn/><Results/></>}/>*/}
-                            {/*<Route path="/:index/:id/:includes_field" element={<><Header showHomeBtn/><Results/></>}/>*/}
+                                            null}/>
+                            <Route path="/:id" element={<Home getParams={this.getParams}/>}/>
                         </Routes>
                     </div>
                 </BrowserRouter>
                 <div className='row footers'>
                     <Footers/>
                 </div>
-                {/*<Header/>*/}
-                {/*{'ids' in this.state.ssoar_ids_list && this.state.ssoar_ids_list['ids'].length!==0?<Home idsList={this.state.ssoar_ids_list['ids']}/>:null}*/}
-                {/*<div className='row footers'>*/}
-                {/*    <Footers/>*/}
-                {/*</div>*/}
             </div>
         );
     }
