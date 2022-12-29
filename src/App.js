@@ -35,11 +35,11 @@ class App extends Component {
         })
         if (id && id !== 'null') {
             // window.open('http://localhost:3000/' + id, '_blank')
-            window.open('https://demo-outcite.gesis.org:443/' + id, '_blank')
+            window.open('https://demo-vadis.gesis.org:443/' + id, '_blank')
         }
         else{
             // window.open('http://localhost:3000/', '_self')
-            window.open('https://demo-outcite.gesis.org:443/', '_self')
+            window.open('https://demo-vadis.gesis.org:443/', '_self')
         }
     }
 
