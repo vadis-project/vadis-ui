@@ -12,7 +12,7 @@ import './styles/Accordions.sass'
 import './styles/Icon.sass'
 import Icon from "./Icon";
 
-let range_value = 2; // set global variable due to recursive call of the component, and it changes state to initial value on each call
+let range_value = 1; // set global variable due to recursive call of the component, and it changes state to initial value on each call
 
 class Accordions extends Component {
     constructor(props) {
@@ -57,16 +57,16 @@ class Accordions extends Component {
                                 typeof res[1] === 'object' && Object.keys(res[1]).length !== 0 && !Array.isArray(res[1]) && res[1] !== null ?
                                     !('score' in res[1]) || ('score' in res[1] && Number(res[1]['score']) <= range_value) ?
                                         <AccordionItem className='col-12' key={res_ind}>
-                                            {/*{!('score' in res[1])?*/}
-                                            {/*    <span className="range-clr rt-icon">*/}
-                                            {/*        <label htmlFor="score">Slide to filter sentences by score (Min: 0, Max: 2, Current: {range_value})</label> &nbsp;*/}
-                                            {/*        <input type="range" id="score" name="score" min="0" max="2" step="0.5"*/}
-                                            {/*               defaultValue={range_value} onChange={this.handleChange}/>*/}
-                                            {/*        /!*<output>{range_value}</output>*!/*/}
-                                            {/*    </span>*/}
-                                            {/*    :*/}
-                                            {/*    null*/}
-                                            {/*}*/}
+                                            {!('score' in res[1])?
+                                                <span className="range-clr rt-icon">
+                                                    <label htmlFor="score">Slide to filter sentences by score (Min: 0, Max: 2, Current: {range_value})</label> &nbsp;
+                                                    <input type="range" id="score" name="score" min="0" max="2" step="0.5"
+                                                           defaultValue={range_value} onChange={this.handleChange}/>
+                                                    {/*<output>{range_value}</output>*/}
+                                                </span>
+                                                :
+                                                null
+                                            }
                                             <AccordionItemHeading>
                                                 <AccordionItemButton className='accordion__button'>
                                                     {res[0]}
