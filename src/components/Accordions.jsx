@@ -55,7 +55,7 @@ class Accordions extends Component {
                                 </AccordionItem>
                                 :
                                 typeof res[1] === 'object' && Object.keys(res[1]).length !== 0 && !Array.isArray(res[1]) && res[1] !== null ?
-                                    !('score' in res[1]) || ('score' in res[1] && Number(res[1]['score']) <= range_value) ?
+                                    !('score' in res[1]) || ('score' in res[1] && Number(res[1]['score']) >= range_value) ?
                                         <AccordionItem className='col-12' key={res_ind}>
                                             {!('score' in res[1])?
                                                 <span className="range-clr rt-icon">
