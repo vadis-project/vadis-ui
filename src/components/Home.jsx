@@ -12,12 +12,10 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            vadis_data: {},
-            loading: false,
-            ssoar_docs: [],
+            merged_results: [],
+            actual_hits: [],
             from: 0,
             size: 5,
-            vadis_results: false,
             search_results: false,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
             vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
@@ -25,7 +23,6 @@ class Home extends Component {
             outcite_ssoar_endpoint: 'https://demo-vadis.gesis.org/outcite_ssoar/_search?',
 
         };
-        this.getVariableResults = this.getVariableResults.bind(this)
         this.getResults = this.getResults.bind(this)
         this.updateStateArrayIndex = this.updateStateArrayIndex.bind(this)
         this.isNumeric = this.isNumeric.bind(this)
@@ -39,65 +36,19 @@ class Home extends Component {
         return /^\d+$/.test(value);
     }
 
-    // getVariableResults(id, ind) {
-    //     let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, true)
-    //     this.setState({
-    //         loading : newLoadingArr
-    //     });
-    //     let api_endpoint = this.state.vadis_app_endpoint + id;
-    //     fetch(api_endpoint)
-    //         .then(response => response.json())
-    //         .then(result => {
-    //             let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, false)
-    //             let newVadisArr = this.updateStateArrayIndex(this.state.vadis_data, ind, result)
-    //             this.setState({
-    //                 vadis_data: newVadisArr,
-    //                 loading: newLoadingArr
-    //             });
-    //         })
-    //         .catch(error => {
-    //                 let newLoadingArr = this.updateStateArrayIndex(this.state.loading, ind, false)
-    //                 let newVadisArr = this.updateStateArrayIndex(this.state.vadis_data, ind, {'error': error})
-    //                 this.setState({
-    //                     loading: newLoadingArr,
-    //                     vadis_data: newVadisArr,
-    //                 });
-    //                 console.log('error', error)
-    //         }
-    //             );
-    // }
-
-    getVariableResults(id) {
-        this.setState({
-            loading: true,
-            vadis_results: true,
-        });
-        let api_endpoint = this.state.vadis_app_endpoint + id;
-        fetch(api_endpoint)
-            .then(response => response.json())
-            .then(result => {
-                this.setState({
-                    vadis_data: result,
-                    loading: false,
-                });
-            })
-            .catch(error => {
-                    this.setState({
-                        vadis_data: {'error': error},
-                        loading: false,
-                    });
-                    console.log('error', error)
-                }
-            );
+    componentDidMount() {
+        // const {id} = this.props.params;
+        this.getResults(null, 0, 5)
+        // if(!id){this.getResults(null, 0, 5)}
     }
 
     getResults(q, from, size) {
         const {id} = this.props.params;
         let strDocIds = []
+        let merged_results_list = []
         if (id && !q) {
             strDocIds[0] = '"gesis-ssoar-' + String(id) + '"'
-        }
-        else if(!id && !q){
+        } else if (!id && !q) {
             let docIds = this.props.idsList.slice(from, from + size)
             docIds.forEach((id, i) => {
                 strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
@@ -105,76 +56,63 @@ class Home extends Component {
         }
         q = q ? this.isNumeric(q) ? 'gesis-ssoar-' + q : q.replace(/[;&/\\#,+()$~%.'":*?<>{}]/g, '') : null;
         this.setState({
-            ssoar_docs: [],
-            loading: true,
+            merged_results: [],
             search_results: !!q,
         })
         // To get docs from index
         // let outcite_api_endpoint = q? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"bool":{"must":[{"term":{"has_fulltext":true}},{"exists":{"field":"abstract"}}]}}}&from=' + from + '&size=' + size
-        // docs from file
+        // get doc ids from file
         let outcite_api_endpoint = q ? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"terms":{"_id":[' + strDocIds + ']}}}'
-        // let outcite_api_endpoint = q ? this.state.outcite_ssoar_endpoint + 'q=title:"' + q + '" OR abstract:"' + q + '" OR _id:"' + q + '"&from=' + from + '&size=' + size : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
-        // let outcite_api_endpoint = id ? this.state.outcite_ssoar_endpoint + 'q=_id:' + id : this.state.outcite_ssoar_endpoint + 'from=' + from + '&size=' + size;
         fetch(outcite_api_endpoint)
             .then(response => response.json())
             .then(hits => {
                 this.setState({
-                    ssoar_docs: hits['hits']['hits'],
-                    from: from,
-                    size: size,
-                    loading: false
+                    actual_hits: hits['hits']['hits'],
+                });
+                hits['hits']['hits'].forEach((obj, i) => {
+                    fetch(this.state.vadis_app_endpoint + obj['_id'].split('-')[2])
+                        .then(resp => resp.json())
+                        .then(res => {
+                            let merged_obj = {...obj, ...{'vadis_data': res}}
+                            merged_results_list.push(merged_obj)
+                            this.setState({
+                                from: from,
+                                size: size,
+                            })
+                        }).catch(error => {
+                        let merged_obj = {...obj, ...{'vadis_data': {'error': error}}}
+                        merged_results_list.push(merged_obj)
+                        this.setState({
+                            from: from,
+                            size: size,
+                        })
+                        console.log('error', error)
+                    });
                 })
-                if (id) {
-                    this.getVariableResults(id)
-                }
-            })
-            .catch(error => console.log('error', error));
-    }
-
-    // clearView() {
-    //     console.log('here')
-    //     this.setState({
-    //         vadis_data: {},
-    //         // loading: false,
-    //     })
-    // }
-    //
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-    //     if (prevState.ssoar_docs !== this.state.ssoar_docs) {
-    //         this.clearView();
-    //     }
-    // }
-
-    async componentDidMount() {
-        this.getResults(null, 0, 5)
+            }).catch(error => console.log('error', error));
+        this.setState({
+            merged_results: merged_results_list,
+        });
     }
 
     render() {
+        let loading = this.state.actual_hits.length !== this.state.merged_results.length || this.state.actual_hits.length === 0
         return (
             <div className='row'>
                 <div className='d-flex justify-content-center'>
                     <SearchBar placeholder={'Search query...'} globalSearch
-                        // loading={this.state.loading}
-                               getResults={this.getResults} from={this.state.from} size={this.state.size}
-                    />
-
+                               getResults={this.getResults} from={this.state.from} size={this.state.size}/>
                 </div>
-
                 {
-                    this.state.ssoar_docs.length ? <div className='d-flex justify-content-center'>
-                            <Table ssoar_docs={this.state.ssoar_docs}
-                                   vadis_data={this.props.params.id && !this.state.search_results? this.state.vadis_data : null}
-                                   // vadis_data={this.props.params.id && !this.state.search_results? this.state.vadis_data : null}
-                                // getVariableResults={this.getVariableResults}
-                                   loading={this.state.loading}
+                    this.state.merged_results.length && !loading ? <div className='d-flex justify-content-center'>
+                            <Table key={this.state.merged_results.length} ssoar_docs={this.state.merged_results}
+                                   loading={loading}
                                    getParams={this.props.getParams}
                                    detailedView={!!this.props.params.id && !this.state.search_results}
-                                   // detailedView={!!this.props.params.id && (this.props.vadis_data && Object.keys(this.props.vadis_data).length !== 0
-                                   // && Object.getPrototypeOf(this.props.vadis_data) === Object.prototype)}
                             />
                         </div>
                         :
-                        this.state.loading ?
+                        loading ?
                             <div className="d-flex justify-content-center">
                                 <div className="spinner-border bg-color" role="status">
                                     {/*<span className="sr-only">Loading...</span>*/}
@@ -184,43 +122,33 @@ class Home extends Component {
                             null
                 }
                 {
-                    this.state.ssoar_docs.length > 1 && !this.state.search_results ?
+                    this.state.merged_results.length > 1 && !this.state.search_results && !loading ?
                         <div className="d-flex justify-content-center">
-                            <button type="button" className="btn btn-link bg-color"
-                                // disabled={this.state.from < 5 || !this.state.loading.every(element => element === false)}
-                                    disabled={this.state.from < 5}
+                            <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
                                     onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
                             </button>
                             <button type="button" className="btn btn-link bg-color"
-                                // disabled={!this.state.loading.every(element => element === false)}
                                     onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
                             </button>
                         </div>
                         :
-                        // this.state.ssoar_docs.length === 1
-
-                        this.state.search_results && !this.state.loading ?
+                        this.state.search_results && !loading ?
                             <div className="d-flex justify-content-center">
                                 <button type="button" className="btn btn-link bg-color"
-                                    // disabled={!this.state.loading.every(element => element === false)}
                                         onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                                    {/*onClick={() => this.props.getParams(null)}>&laquo; Back*/}
                                 </button>
                             </div>
                             :
-                            this.state.vadis_results && !this.state.loading ?
+                            !loading && this.state.merged_results.length > 0 ?
                                 <div className="d-flex justify-content-center">
                                     <button type="button" className="btn btn-link bg-color"
-                                        // disabled={!this.state.loading.every(element => element === false)}
-                                        //     onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                                            onClick={() => this.props.getParams(null)}>&laquo; Back
+                                        onClick={() => this.props.getParams(null)}>&laquo; Back
                                     </button>
                                 </div>
                                 :
                                 null
                 }
             </div>
-
         );
     }
 }

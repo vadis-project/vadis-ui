@@ -2,15 +2,16 @@
   color: #404EA1 !important
   //color: #58748f !important
 
-.rt-icon
+.rt-pos
   float: right
-  margin: 20px
+  margin: 10px
+
+.orange-clr
+  color: #F04923
 
 a.bg-color:hover
   color: #F04923
-
-.range-clr
-  color: #B3D8F2
+  cursor: pointer
 
 //datalist
 //  display: flex
@@ -21,27 +22,6 @@ a.bg-color:hover
 
 //option
 //  padding: 0
-
-#score
-  background: #B3D8F2
-  background: linear-gradient(to right, #FFFFFF 0%, #B3D8F2 75%)
-  border: solid 1px #404EA1
-  border-radius: 10px
-  height: 10px
-  -webkit-appearance: none
-
-input[type='range']::-webkit-slider-thumb
-  //width: 200px
-  //margin: 0
-  width: 15px
-  -webkit-appearance: none
-  //box-shadow: 4px 0 4px #404EA1
-  height: 15px
-  background: #F04923
-  border-radius: 8px
-
-//.input.range-clr:hover, label.range-clr:hover
-//  background-color: #B3D8F2
 
 //.accordion-layout
 //  margin-top: 10px
@@ -109,6 +89,27 @@ ul
 .accordion__button:hover
   background-color: #404EA1 !important
   color: white !important
+
+.tooltip
+  //position: relative
+  //display: inline-block
+  border-bottom: 1px dotted black
+
+.tooltip > .tooltiptext
+  visibility: hidden
+  width: 120px
+  background-color: black
+  color: #fff
+  text-align: center
+  border-radius: 6px
+  padding: 5px 0
+
+  /* Position the tooltip */
+  position: absolute
+  z-index: 1
+
+.tooltip:hover .tooltiptext
+  visibility: visible
 
 //
 //.accordion__button:before
