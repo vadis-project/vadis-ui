@@ -16,7 +16,7 @@ class Home extends Component {
             actual_hits: [],
             from: 0,
             size: 5,
-            search_results: false,
+            searched: false,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
             vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
             // outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
@@ -49,20 +49,24 @@ class Home extends Component {
         if (id && !q) {
             strDocIds[0] = '"gesis-ssoar-' + String(id) + '"'
         } else if (!id && !q) {
-            let docIds = this.props.idsList.slice(from, from + size)
-            docIds.forEach((id, i) => {
-                strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
-            });
+            strDocIds = this.props.idsList.slice(from, from + size)
+            // docIds.forEach((id, i) => {
+            //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
+            // });
         }
-        q = q ? this.isNumeric(q) ? 'gesis-ssoar-' + q : q.replace(/[;&/\\#,+()$~%.'":*?<>{}]/g, '') : null;
+        q = q && this.isNumeric(q) ? 'gesis-ssoar-' + q : q;
+        // q = q ? this.isNumeric(q) ? 'gesis-ssoar-' + q : q.replace(/[;&/\\#,+()$~%.'":*?<>{}]/g, '') : null;
         this.setState({
             merged_results: [],
-            search_results: !!q,
+            searched: false,
         })
         // To get docs from index
         // let outcite_api_endpoint = q? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"bool":{"must":[{"term":{"has_fulltext":true}},{"exists":{"field":"abstract"}}]}}}&from=' + from + '&size=' + size
         // get doc ids from file
-        let outcite_api_endpoint = q ? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"terms":{"_id":[' + strDocIds + ']}}}'
+        let outcite_api_endpoint = q && !(q.includes('gesis-ssoar-')) ? this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"bool":{"must":[{"multi_match":{"query":"'+q+'","fields":["title","fulltext"],"operator":"or"}}]}},"from":0,"size":5}'
+                                        : q && q.includes('gesis-ssoar-')? this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"terms":{"_id":["' + q + '"]}}}'
+                                        : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"terms":{"_id":[' + strDocIds + ']}}}'
+        // let outcite_api_endpoint = q ? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"terms":{"_id":[' + strDocIds + ']}}}'
         fetch(outcite_api_endpoint)
             .then(response => response.json())
             .then(hits => {
@@ -70,33 +74,46 @@ class Home extends Component {
                     actual_hits: hits['hits']['hits'],
                 });
                 hits['hits']['hits'].forEach((obj, i) => {
-                    fetch(this.state.vadis_app_endpoint + obj['_id'].split('-')[2])
-                        .then(resp => resp.json())
-                        .then(res => {
-                            let merged_obj = {...obj, ...{'vadis_data': res}}
+                    if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
+                        obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
+                        delete obj['_source']['dates']
+
+                    }
+                    let id_num = obj['_id'].split('-')[2]
+                    // if (this.props.idsList.includes('"' + obj['_id'] + '"')){
+                        fetch(this.state.vadis_app_endpoint + id_num)
+                            .then(resp => resp.json())
+                            .then(res => {
+                                let merged_obj = {...obj, ...{'vadis_data': res}}
+                                merged_results_list.push(merged_obj)
+                                this.setState({
+                                    from: from,
+                                    size: size,
+                                    searched: !!q,
+
+                                })
+                            }).catch(error => {
+                            let merged_obj = {...obj, ...{'vadis_data': {'error': error}}}
                             merged_results_list.push(merged_obj)
                             this.setState({
                                 from: from,
                                 size: size,
+                                searched: !!q,
                             })
-                        }).catch(error => {
-                        let merged_obj = {...obj, ...{'vadis_data': {'error': error}}}
-                        merged_results_list.push(merged_obj)
-                        this.setState({
-                            from: from,
-                            size: size,
-                        })
-                        console.log('error', error)
-                    });
+                            console.log('error', error)
+                        });
+                    // }
                 })
             }).catch(error => console.log('error', error));
         this.setState({
             merged_results: merged_results_list,
+            // merged_results: merged_results_list.sort((a,b) => (b.vadis_data.variable_sentences.length < a.vadis_data.variable_sentences.length) ? 1 : ((a.vadis_data.variable_sentences.length < b.vadis_data.variable_sentences.length) ? -1 : 0)),
         });
     }
 
     render() {
-        let loading = this.state.actual_hits.length !== this.state.merged_results.length || this.state.actual_hits.length === 0
+        let loading = !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length || this.state.actual_hits.length === 0)
+        // console.log(this.state.merged_results)
         return (
             <div className='row'>
                 <div className='d-flex justify-content-center'>
@@ -108,7 +125,7 @@ class Home extends Component {
                             <Table key={this.state.merged_results.length} ssoar_docs={this.state.merged_results}
                                    loading={loading}
                                    getParams={this.props.getParams}
-                                   detailedView={!!this.props.params.id && !this.state.search_results}
+                                   detailedView={!!this.props.params.id && !this.state.searched}
                             />
                         </div>
                         :
@@ -122,7 +139,7 @@ class Home extends Component {
                             null
                 }
                 {
-                    this.state.merged_results.length > 1 && !this.state.search_results && !loading ?
+                    this.state.merged_results.length > 1 && !this.state.searched && !loading ?
                         <div className="d-flex justify-content-center">
                             <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
                                     onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
@@ -132,7 +149,7 @@ class Home extends Component {
                             </button>
                         </div>
                         :
-                        this.state.search_results && !loading ?
+                        this.state.searched && !loading ?
                             <div className="d-flex justify-content-center">
                                 <button type="button" className="btn btn-link bg-color"
                                         onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
