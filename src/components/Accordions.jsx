@@ -48,7 +48,7 @@ class Accordions extends Component {
         let rv= []
         Object.entries(this.props.result).map((res, res_ind) => {
             if (res[0]!=='summary') {
-                rv.push([1.0, 2.0])
+                rv.push([0.7, 1.0])
                 let c = 0
                 Object.entries(this.props.result[res[0]]).forEach((k, i) => {
                     // console.log(k, rv[res_ind])
@@ -83,7 +83,7 @@ class Accordions extends Component {
                                 <span className="rt-pos">
                                     <Slider ind={var_sentences_ind}
                                             label={<span>Slide to filter sentences by score (Selected Range: <b> {(range_values[var_sentences_ind].toString())}</b>)</span>}
-                                            min={0} max={3}
+                                            min={0} max={1}
                                             step={0.1} defaultValue={range_values[var_sentences_ind]}
                                             obj_key={var_sentences[0]}
                                             handleChange={this.handleChange}/>
