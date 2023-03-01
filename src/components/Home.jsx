@@ -83,11 +83,14 @@ class Home extends Component {
                     actual_hits: hits['hits']['hits'],
                 });
                 hits['hits']['hits'].forEach((obj, i) => {
-                    // if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
-                    //     obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
-                    //     delete obj['_source']['dates']
-                    //
-                    // }
+                    if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
+                        obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
+                        delete obj['_source']['dates']
+
+                    }
+                    else if (!('dates' in obj['_source'] || 'date_info' in obj['_source'])){
+                        obj['_source']['date_info'] = {'issue_date': 'XXXX'}
+                    }
                     let id_num = obj['_id'].split('-')[2]
                     // if (this.props.idsList.includes('"' + obj['_id'] + '"')){
                         fetch(this.state.vadis_app_endpoint + id_num)
