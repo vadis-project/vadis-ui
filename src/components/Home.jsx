@@ -125,7 +125,7 @@ class Home extends Component {
 
     render() {
         let loading = !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length || this.state.actual_hits.length === 0)
-        // console.log(this.state.merged_results)
+        // console.log(this.state.sort_filter)
         return (
             <div className='row'>
                 <div className='d-flex justify-content-center'>
@@ -137,10 +137,10 @@ class Home extends Component {
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <label htmlFor="sort" className='lbl'>Sort by:</label>
                             <select className='select text-center' name="sort" id="sort" onChange={(event)=>this.sortBy(event.target.value)}>
-                                <option value="select">select...</option>
-                                <option value="year">Year</option>
-                                <option value="best_match">Best Match</option>
-                                <option value="linked_vars_c">Linked Variables Count</option>
+                                <option selected={this.state.sort_filter===null?'selected':null} value="select">select...</option>
+                                <option selected={this.state.sort_filter==='year'?'selected':null} value="year">Year</option>
+                                <option selected={this.state.sort_filter==='best_match'?'selected':null} value="best_match">Best Match</option>
+                                <option selected={this.state.sort_filter==='linked_vars_c'?'selected':null} value="linked_vars_c">Linked Variables Count</option>
                             </select>
                         </> : null
                     }
