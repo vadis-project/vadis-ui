@@ -89,7 +89,7 @@ class Home extends Component {
 
                     }
                     else if (!('dates' in obj['_source'] || 'date_info' in obj['_source'])){
-                        obj['_source']['date_info'] = {'issue_date': 'XXXX'}
+                        obj['_source']['date_info'] = {'issue_date': '0000'}
                     }
                     let id_num = obj['_id'].split('-')[2]
                     // if (this.props.idsList.includes('"' + obj['_id'] + '"')){
