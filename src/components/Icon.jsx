@@ -7,7 +7,7 @@ class Icon extends Component {
     render() {
         return (
             this.props.iconName === "Filter" ?
-                <FontAwesomeIcon icon={faFilter} size={this.props.size?this.props.size:'lg'}/>
+                <FontAwesomeIcon className='icn-color pdng' icon={faFilter} size={this.props.size?this.props.size:'lg'}/>
                 : null
         )
     }

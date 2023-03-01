@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import SearchBar from './SearchBar';
 import './styles/Home.sass';
 import Table from "./Table";
+import Icon from "./Icon";
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()}/>;
@@ -16,6 +17,7 @@ class Home extends Component {
             actual_hits: [],
             from: 0,
             size: 5,
+            sort_filter: null,
             searched: false,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
             vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
@@ -24,6 +26,7 @@ class Home extends Component {
 
         };
         this.getResults = this.getResults.bind(this)
+        this.sortBy = this.sortBy.bind(this)
         this.updateStateArrayIndex = this.updateStateArrayIndex.bind(this)
         this.isNumeric = this.isNumeric.bind(this)
     }
@@ -40,6 +43,12 @@ class Home extends Component {
         // const {id} = this.props.params;
         this.getResults(null, 0, 5)
         // if(!id){this.getResults(null, 0, 5)}
+    }
+
+    sortBy(filter){
+        this.setState({
+            sort_filter: filter
+        })
     }
 
     getResults(q, from, size) {
@@ -74,11 +83,11 @@ class Home extends Component {
                     actual_hits: hits['hits']['hits'],
                 });
                 hits['hits']['hits'].forEach((obj, i) => {
-                    if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
-                        obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
-                        delete obj['_source']['dates']
-
-                    }
+                    // if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
+                    //     obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
+                    //     delete obj['_source']['dates']
+                    //
+                    // }
                     let id_num = obj['_id'].split('-')[2]
                     // if (this.props.idsList.includes('"' + obj['_id'] + '"')){
                         fetch(this.state.vadis_app_endpoint + id_num)
@@ -119,6 +128,20 @@ class Home extends Component {
                 <div className='d-flex justify-content-center'>
                     <SearchBar placeholder={'Search query...'} globalSearch
                                getResults={this.getResults} from={this.state.from} size={this.state.size}/>
+
+                    {this.state.merged_results.length>1?
+                        <>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <label htmlFor="sort" className='lbl'>Sort by:</label>
+                            <select className='select text-center' name="sort" id="sort" onChange={(event)=>this.sortBy(event.target.value)}>
+                                <option value="select">select...</option>
+                                <option value="year">Year</option>
+                                <option value="best_match">Best Match</option>
+                                <option value="linked_vars_c">Linked Variables Count</option>
+                            </select>
+                        </> : null
+                    }
+                    {/*<Icon iconName='Filter'/>*/}
                 </div>
                 {
                     this.state.merged_results.length && !loading ? <div className='d-flex justify-content-center'>
@@ -126,6 +149,7 @@ class Home extends Component {
                                    loading={loading}
                                    getParams={this.props.getParams}
                                    detailedView={!!this.props.params.id && !this.state.searched}
+                                   sortFilter={this.state.sort_filter}
                             />
                         </div>
                         :
