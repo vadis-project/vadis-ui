@@ -4,6 +4,7 @@ import './App.css';
 import Header from './components/Header';
 import Home from "./components/Home";
 import Footers from "./components/Footers";
+import idsFile from './data/vadis_app_ssoar_list.json'
 
 // import idsList from '../src/data/vadis_app_ssoar_list.json';
 
@@ -19,15 +20,17 @@ class App extends Component {
     }
 
     componentDidMount() {
-        let strDocIds = []
+        // let strDocIds = []
         fetch(this.state.vadis_app_ssoar_list_endpoint)
             .then(response => response.json())
             .then(result => {
-                result['ids'].forEach((id, i) => {
-                    strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
-                });
+                // result['ids'].forEach((id, i) => {
+                //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
+                // });
                 this.setState({
-                    ssoar_ids_list: strDocIds,
+                    ssoar_ids_list: result['ids'],
+                    // ssoar_ids_list: strDocIds,
+                    // ssoar_ids_list: idsFile['ids'],
                 })
             })
             .catch(error => console.log('error', error));
@@ -39,7 +42,7 @@ class App extends Component {
         })
         if (id && id !== 'null') {
             // window.open('http://localhost:3000/' + id, '_blank')
-            window.open('https://demo-vadis.gesis.org:443/' + id, '_blank')
+            window.open('https://demo-vadis.gesis.org:443/' + id, '_self')
         }
         else{
             // window.open('http://localhost:3000/', '_self')
@@ -48,6 +51,16 @@ class App extends Component {
     }
 
     render() {
+        // const vadis_user = {
+        //     id: "some_id",
+        //     location: "Lagos",
+        // }
+        //
+        // window.localStorage.setItem('vadis_user', JSON.stringify(vadis_user));
+        // console.log(JSON.parse(window.localStorage.getItem('vadis_user')))
+        // window.localStorage.removeItem('user');
+        // let KeyName = window.localStorage.key(0)
+        // console.log(KeyName)
         return (
             <div className="container">
                 <Header/>

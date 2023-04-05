@@ -9,6 +9,10 @@
 .orange-clr
   color: #F04923
 
+.inline-div
+  display: inline-block
+  //font-weight: bold
+
 a.bg-color:hover
   color: #F04923
   cursor: pointer
@@ -66,6 +70,9 @@ ul
   min-height: 2em
   //background-color: #fff
 
+.sentence-tooltip-style
+  width: 50% !important
+
 ////**
 ////* ----------------------------------------------
 ////* Demo styles
@@ -93,29 +100,36 @@ ul
   border-radius: 10px
 
 .accordion__button:hover
-  background-color: #404EA1 !important
-  color: white !important
+  background-color: #B3D8F2 !important
+  color: #404EA1 !important
 
-.tooltip
-  //position: relative
-  //display: inline-block
-  border-bottom: 1px dotted black
+//.tooltip
+//  //position: relative
+//  //display: inline-block
+//  border-bottom: 1px dotted black
+//
+//.tooltip > .tooltiptext
+//  visibility: hidden
+//  width: 120px
+//  background-color: black
+//  color: #fff
+//  text-align: center
+//  border-radius: 6px
+//  padding: 5px 0
+//
+//  /* Position the tooltip */
+//  position: absolute
+//  z-index: 1
+//
+//.tooltip:hover .tooltiptext
+//  visibility: visible
 
-.tooltip > .tooltiptext
-  visibility: hidden
-  width: 120px
-  background-color: black
-  color: #fff
-  text-align: center
-  border-radius: 6px
-  padding: 5px 0
+.clickable-text
+  //color: #404EA1
+  cursor: copy
 
-  /* Position the tooltip */
-  position: absolute
-  z-index: 1
-
-.tooltip:hover .tooltiptext
-  visibility: visible
+span.clickable-text:hover
+  color: #F04923
 
 //
 //.accordion__button:before

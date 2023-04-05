@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './styles/Icon.sass'
-import {faFilter} from "@fortawesome/free-solid-svg-icons";
+import {faFilter, faFilePdf} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Icon extends Component {
@@ -8,7 +8,9 @@ class Icon extends Component {
         return (
             this.props.iconName === "Filter" ?
                 <FontAwesomeIcon className='icn-color pdng' icon={faFilter} size={this.props.size?this.props.size:'lg'}/>
-                : null
+                : this.props.iconName === "PDF" ?
+                    <FontAwesomeIcon className='icn-color' icon={faFilePdf} size={this.props.size?this.props.size:'lg'}/>
+                    : null
         )
     }
 }
