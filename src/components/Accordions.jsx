@@ -328,7 +328,7 @@ class Accordions extends Component {
                                     }
                                 </AccordionItemPanel>
                                 <div className="d-flex justify-content-center">
-                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.range_values[1][0] < 0.2 || this.state.sentences_within_range_count[var_sentences_ind] === Object.keys(var_sentences[1]).length}
+                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.range_values[1][0] < 0.5 || this.state.sentences_within_range_count[var_sentences_ind] === Object.keys(var_sentences[1]).length}
                                             onClick={() => this.state.range_values[1][0] >= 0.2 ? this.handleChange([this.state.range_values[1][0]-0.20, 1.0], var_sentences[0], var_sentences_ind) : null}> Show more sentences
                                     </button>
                                 </div>
