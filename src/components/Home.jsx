@@ -16,10 +16,12 @@ class Home extends Component {
         this.state = {
             merged_results: [],
             actual_hits: [],
+            hits_count: null,
             from: 0,
             size: 5,
             sort_filter: null,
             searched: false,
+            search_query: null,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
             vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
             // outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
@@ -100,7 +102,8 @@ class Home extends Component {
         let myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        if (id && !q) {
+        if (id && !q)
+        {
             strDocIds[0] = id
         } else if (!id && !q) {
             strDocIds = this.props.idsList.slice(from, from + size)
@@ -110,14 +113,15 @@ class Home extends Component {
         this.setState({
             merged_results: [],
             searched: false,
+            search_query: q
         })
         // To get docs from index
         // let outcite_api_endpoint = q? this.state.outcite_ssoar_endpoint + 'q=(has_fulltext:true AND (fulltext:"' + q + '" OR title:"' + q + '" OR abstract:"' + q + '")) OR _id:"' + q + '"&from=0&size=5' : this.state.outcite_ssoar_endpoint + 'source_content_type=application/json&source={"query":{"bool":{"must":[{"term":{"has_fulltext":true}},{"exists":{"field":"abstract"}}]}}}&from=' + from + '&size=' + size
         // get doc ids from file
         let query = q && !(q.includes('gesis-ssoar-')) ?
             JSON.stringify({
-                "from":0,
-                "size":5,
+                "from":from,
+                "size":size,
                 "query": {
                     "bool": {
                         "filter": [
@@ -130,6 +134,7 @@ class Home extends Component {
                                 "multi_match": {
                                     "query": q,
                                     "type": "best_fields",
+                                    // "fields": ["title", "abstract"],
                                     "fields": ["title", "abstract", "fulltext"],
                                     "operator": "and"
                                 }
@@ -153,8 +158,9 @@ class Home extends Component {
             .then(hits => {
                 this.setState({
                     actual_hits: hits['hits']['hits'],
+                    hits_count: hits['hits']['total']['value'],
                 });
-                if(hits['hits']['hits'].length>0){
+                if(hits['hits']['hits'].length > 0){
                     hits['hits']['hits'].forEach((obj, i) => {
                         if ('dates' in obj['_source'] && 'issue_date' in obj['_source']['dates']){ // issue with actual data -> renaming key 'dates' to 'date_info' to have it identical in all objects
                             obj['_source']['date_info'] = {'issue_date': obj['_source']['dates']['issue_date']}
@@ -276,8 +282,6 @@ class Home extends Component {
     // }
 
     render() {
-        // this.getResultsPost()
-        // console.log(this.props.idsList)
         let loading = !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length)
         let noResult = this.state.actual_hits.length === 0
         return (
@@ -286,8 +290,6 @@ class Home extends Component {
                     <div className='card'>
                         {!this.props.params.id ?
                             <div className='row mgn-top'>
-                                {/*<div className='col-12'>*/}
-                                {/*<div className='card'>*/}
                                 <p>
                                     <span className='bg-color'><b>VADIS </b></span>
                                     is to allow for searching und using survey variables in context.
@@ -295,65 +297,12 @@ class Home extends Component {
                                     within the full text of research literature, creating semantic links based on these
                                     references and making the resulting data available as Linked Open Data.
                                 </p>
-                                {/*<div className='row d-flex justify-content-center'>*/}
-                                {/*    <div className='col-6'>*/}
-                                {/*        <ul className='margin-text'><u>How to start the process:</u>*/}
-                                {/*            <li><b>First:</b> Choose a pdf file by clicking on "Choose File" button.</li>*/}
-                                {/*            <li><b>Second:</b> Click on "Upload" button to start the process.</li>*/}
-                                {/*            <li><b>Note:</b> After uploading a file, follow-up ID will be displayed on the*/}
-                                {/*                screen. This ID is necessary for following up the results for an upload.*/}
-                                {/*                So, kindly save it or bookmark a URL.*/}
-                                {/*            </li>*/}
-                                {/*        </ul>*/}
-                                {/*    </div>*/}
-                                {/*    <div className='col-6'>*/}
-                                {/*        <ul className='margin-text'><u>How to check the result:</u>*/}
-                                {/*            <li><b>First:</b> Enter the follow-up ID in the search bar below then click on*/}
-                                {/*                "Search" button or*/}
-                                {/*                directly hit the URL(displayed for the new upload) to open it up in the new*/}
-                                {/*                tab.*/}
-                                {/*            </li>*/}
-                                {/*            <li><b>Second:</b> The search result will be displayed below on the same screen*/}
-                                {/*                if it is available but you*/}
-                                {/*                can also navigate to the new screen with "Get to Result" button.*/}
-                                {/*            </li>*/}
-                                {/*            <li><b>Note:</b> Complete extraction process will take a while,*/}
-                                {/*                at least a minute for new upload, and it completely depends on the size of*/}
-                                {/*                the*/}
-                                {/*                file.*/}
-                                {/*            </li>*/}
-                                {/*            <li><b>Tip:</b> If you ever forget to save the follow-up ID or bookmark the*/}
-                                {/*                result URL*/}
-                                {/*                then you can also search for the results for your upload via searching for*/}
-                                {/*                some unique keywords*/}
-                                {/*                or strings like title, author(s) etc. of the pdf.*/}
-                                {/*            </li>*/}
-                                {/*        </ul>*/}
-                                {/*    </div>*/}
-                                {/*    <div className='col-10'>*/}
-                                {/*        <em className='text-red'>Disclaimer:</em> <strong><i>Do not upload any confidential*/}
-                                {/*        or private document that you*/}
-                                {/*        don't want to share publicly. Result will be accessible to all users.</i></strong>*/}
-                                {/*        <br/><br/>*/}
-                                {/*        <div className='text-center'>*/}
-                                {/*            <strong>Processed Document Example: </strong>*/}
-                                {/*            <a href="https://demo-outcite.gesis.org/users/b66f4abceff160ddc6e77bc005aa8cc6"*/}
-                                {/*               target='_blank'*/}
-                                {/*               rel='noreferrer'>*/}
-                                {/*                {"https://demo-outcite.gesis.org/users/b66f4abceff160ddc6e77bc005aa8cc6"}*/}
-                                {/*            </a>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-
-                                {/*</div>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
                             </div> : null
                         }
                     <div className='d-flex justify-content-center'>
                         {/*{!this.props.params.id?*/}
                             <SearchBar placeholder={'Search by id, title or keyword(s)'} globalSearch
-                                    getResults={this.getResults} from={this.state.from} size={this.state.size}/>
+                                    getResults={this.getResults} from={0} size={this.state.size}/>
                             {/*:null}*/}
                         {this.state.merged_results.length>1?
                             <>
@@ -365,10 +314,21 @@ class Home extends Component {
                                     <option selected={this.state.sort_filter==='linked_vars_c'} value="linked_vars_c">Linked Variables Count</option>
                                     {/*<option selected={this.state.sort_filter==='best_match'} value="best_match" disabled={!this.state.searched}>Best Match</option>*/}
                                 </select>
+                                {/*{this.state.searched ? <p className='lbl'><b>&nbsp;&nbsp;&nbsp; ({this.state.hits_count} Hits) </b></p> : null}*/}
                             </> : <p></p>
                         }
                         {/*<Icon iconName='Filter'/>*/}
                     </div>
+                    {
+                        this.state.merged_results.length===0 || loading?
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border bg-color mgn-btm" role="status">
+                                    {/*<span className="sr-only">Loading...</span>*/}
+                                </div>
+                            </div>
+                            :
+                            null
+                    }
                     {
                         this.state.merged_results.length && !loading ? <div className='d-flex justify-content-center'>
                                 <Table key={this.state.merged_results.length} ssoar_docs={this.state.merged_results}
@@ -376,35 +336,46 @@ class Home extends Component {
                                        getParams={this.props.getParams}
                                        detailedView={!!this.props.params.id && !this.state.searched}
                                        sortFilter={this.state.sort_filter}
+                                       // hitsCount = {this.state.searched?this.state.hits_count:null}
                                 />
                             </div>
                             :
-                            loading ?
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border bg-color mgn-btm" role="status">
-                                        {/*<span className="sr-only">Loading...</span>*/}
-                                    </div>
-                                </div>
-                                :
+                            // loading ?
+                            //     <div className="d-flex justify-content-center">
+                            //         <div className="spinner-border bg-color mgn-btm" role="status">
+                            //             {/*<span className="sr-only">Loading...</span>*/}
+                            //         </div>
+                            //     </div>
+                            //     :
                                 null
                     }
-                        {noResult && this.state.searched? <p className='orange-clr text-center'> No Result(s) Found!!! </p> : null}
-                        {
-                        this.state.merged_results.length > 1 && !this.state.searched && !loading ?
+                    {noResult && this.state.searched? <p className='orange-clr text-center'> No Result(s) Found!!! </p> : null}
+                    {
+                        this.state.merged_results.length >= 1 && !this.state.searched && !loading && !this.props.params.id ?
+
                             <div className="d-flex justify-content-center">
-                                <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
-                                        onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Back
-                                </button>
-                                <button type="button" className="btn btn-link bg-color"
-                                        onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
-                                </button>
+                                <span>
+                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
+                                                onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Previous
+                                    </button>
+                                    <b className='hits'> {this.state.from + 1} - {this.state.from + this.state.size <= this.props.idsList.length? this.state.from + this.state.size : this.props.idsList.length} out of {this.props.idsList.length} Hits </b>
+                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.from + this.state.size >= this.props.idsList.length}
+                                            onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
+                                    </button>
+                                </span>
                             </div>
                             :
                             this.state.searched && !loading ?
                                 <div className="d-flex justify-content-center">
-                                    <button type="button" className="btn btn-link bg-color"
-                                            onClick={() => this.getResults(null, this.state.from, this.state.size)}>&laquo; Back
-                                    </button>
+                                    <span>
+                                        <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
+                                                onClick={() => this.getResults(this.state.search_query, this.state.from - this.state.size, this.state.size)}>&laquo; Previous
+                                        </button>
+                                        <b className='hits'> {this.state.from + 1} - {this.state.from + this.state.size <= this.state.hits_count? this.state.from + this.state.size : this.state.hits_count} out of {this.state.hits_count} Hits </b>
+                                        <button type="button" className="btn btn-link bg-color" disabled={this.state.from + this.state.size >= this.state.hits_count}
+                                                onClick={() => this.getResults(this.state.search_query, this.state.from + this.state.size, this.state.size)}>&raquo; Next
+                                        </button>
+                                    </span>
                                 </div>
                                 :
                                 !loading && this.state.merged_results.length > 0 ?

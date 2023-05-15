@@ -15,6 +15,9 @@ class SearchBar extends Component {
 
     handleChange(e) {
         this.setState({input: e.target.value});
+        if(!e.target.value){
+            this.props.getResults(null, 0, this.props.size)
+        }
     }
 
     // isNumeric(value) {
