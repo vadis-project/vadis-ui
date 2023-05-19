@@ -124,7 +124,7 @@ class Home extends Component {
                 "size":size,
                 "query": {
                     "bool": {
-                        "filter": [
+                        "must": [  // "filter" doesn't give relevance score
                             {
                                 "terms": {
                                     "_id": this.props.idsList
@@ -135,7 +135,7 @@ class Home extends Component {
                                     "query": q,
                                     "type": "best_fields",
                                     // "fields": ["title", "abstract"],
-                                    "fields": ["title", "abstract", "fulltext"],
+                                    "fields": ["title^3", "abstract^2", "fulltext^1"],
                                     "operator": "and"
                                 }
                             }]
@@ -282,8 +282,9 @@ class Home extends Component {
     // }
 
     render() {
-        let loading = !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length)
-        let noResult = this.state.actual_hits.length === 0
+        let loading = !this.state.hits_count && !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length)
+        let noResult = this.state.hits_count === 0 && this.state.searched
+        // let noResult = this.state.actual_hits.length === 0
         return (
             <>
                 <div className='row'>
@@ -300,6 +301,7 @@ class Home extends Component {
                             </div> : null
                         }
                     <div className='d-flex justify-content-center'>
+                        {this.state.merged_results.length>0? <p className='lbl'><b> {this.state.searched || this.props.params.id ? this.state.hits_count : this.props.idsList.length} Hit(s) </b>&nbsp;&nbsp;&nbsp;</p> : null}
                         {/*{!this.props.params.id?*/}
                             <SearchBar placeholder={'Search by id, title or keyword(s)'} globalSearch
                                     getResults={this.getResults} from={0} size={this.state.size}/>
@@ -309,18 +311,18 @@ class Home extends Component {
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                 <label htmlFor="sort" className='lbl'>Sort by:</label>
                                 <select className='select text-center' name="sort" id="sort" onChange={(event)=>this.sortBy(event.target.value)}>
-                                    <option selected={this.state.sort_filter===null} value={null}>select...</option>
+                                    {/*<option selected={this.state.sort_filter===null} value={null}>Select...</option>*/}
+                                    <option selected={this.state.sort_filter==='relevance'} value="relevance">Relevance</option>
                                     <option selected={this.state.sort_filter==='year'} value="year">Year</option>
                                     <option selected={this.state.sort_filter==='linked_vars_c'} value="linked_vars_c">Linked Variables Count</option>
                                     {/*<option selected={this.state.sort_filter==='best_match'} value="best_match" disabled={!this.state.searched}>Best Match</option>*/}
                                 </select>
-                                {/*{this.state.searched ? <p className='lbl'><b>&nbsp;&nbsp;&nbsp; ({this.state.hits_count} Hits) </b></p> : null}*/}
                             </> : <p></p>
                         }
                         {/*<Icon iconName='Filter'/>*/}
                     </div>
                     {
-                        this.state.merged_results.length===0 || loading?
+                         loading || (this.state.merged_results.length===0 && !this.state.searched)?
                             <div className="d-flex justify-content-center">
                                 <div className="spinner-border bg-color mgn-btm" role="status">
                                     {/*<span className="sr-only">Loading...</span>*/}
@@ -349,7 +351,7 @@ class Home extends Component {
                             //     :
                                 null
                     }
-                    {noResult && this.state.searched? <p className='orange-clr text-center'> No Result(s) Found!!! </p> : null}
+                    {noResult && this.state.searched && this.state.hits_count===0 && !loading? <p className='orange-clr text-center'> No Result(s) Found! Try with different id or keywords.</p> : null}
                     {
                         this.state.merged_results.length >= 1 && !this.state.searched && !loading && !this.props.params.id ?
 
@@ -371,7 +373,7 @@ class Home extends Component {
                                         <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
                                                 onClick={() => this.getResults(this.state.search_query, this.state.from - this.state.size, this.state.size)}>&laquo; Previous
                                         </button>
-                                        <b className='hits'> {this.state.from + 1} - {this.state.from + this.state.size <= this.state.hits_count? this.state.from + this.state.size : this.state.hits_count} out of {this.state.hits_count} Hits </b>
+                                        <b className='hits'> {this.state.hits_count>0?this.state.from + 1:this.state.hits_count} - {this.state.from + this.state.size <= this.state.hits_count? this.state.from + this.state.size : this.state.hits_count} out of {this.state.hits_count} Hits </b>
                                         <button type="button" className="btn btn-link bg-color" disabled={this.state.from + this.state.size >= this.state.hits_count}
                                                 onClick={() => this.getResults(this.state.search_query, this.state.from + this.state.size, this.state.size)}>&raquo; Next
                                         </button>

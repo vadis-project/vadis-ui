@@ -4,7 +4,7 @@ import './App.css';
 import Header from './components/Header';
 import Home from "./components/Home";
 import Footers from "./components/Footers";
-import idsFile from './data/vadis_app_ssoar_list.json'
+// import idsFile from './data/vadis_app_ssoar_list.json'
 
 // import idsList from '../src/data/vadis_app_ssoar_list.json';
 

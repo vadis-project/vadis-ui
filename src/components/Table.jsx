@@ -41,7 +41,8 @@ class Table extends Component {
 
     render() {
         // console.log(this.state.toggled)
-        let sorted_ssoar_docs = this.props.sortFilter==='year'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
+        let sorted_ssoar_docs = this.props.sortFilter==='relevance'?this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
+            :this.props.sortFilter==='year'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
             // : this.props.sortFilter==='best_match'? this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
                 : this.props.sortFilter==='linked_vars_c'? this.props.ssoar_docs.sort((a,b) => (Object.keys(b.vadis_data.variable_sentences).length > Object.keys(a.vadis_data.variable_sentences).length) ? 1 : ((Object.keys(a.vadis_data.variable_sentences).length > Object.keys(b.vadis_data.variable_sentences).length) ? -1 : 0))
                     : this.props.ssoar_docs
@@ -197,31 +198,32 @@ class Table extends Component {
                                         {/*                />*/}
                                         {/*            </span>*/}
                                         {/*}*/}
-                                                        {/*{*/}
-                                                        {/*    'extractive_summary' in doc['vadis_data']?*/}
-                                                        {/*        <span>*/}
-                                                        {/*        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
-                                                        {/*        <span><b id={'extreme_summary_' + ind}>{doc['_source']['abstract'].slice(doc['vadis_data']['extractive_summary'])}</b></span>*/}
-                                                        {/*        <span>{doc['_source']['abstract'].split(doc['_source']['abstract'].slice(doc['vadis_data']['extractive_summary']))[1]}</span>*/}
-                                                        {/*        <ReactTooltip*/}
-                                                        {/*            anchorId={'extreme_summary_' + ind}*/}
-                                                        {/*            // anchorSelect=".extreme_summary_bold"*/}
-                                                        {/*            place="top"*/}
-                                                        {/*            className="tooltip-clr z-pos"*/}
-                                                        {/*            content="Extreme Summary"*/}
-                                                        {/*        />*/}
-                                                        {/*        </span>*/}
-                                                        {/*        :*/}
-                                                        {/*        <span>{doc['_source']['abstract']}</span>*/}
-                                                        {/*}*/}
-                                        {/*    <Highlighter*/}
-                                        {/*    id={'extreme_summary_' + ind}*/}
-                                        {/*    highlightClassName="extreme_summary_bold"*/}
-                                        {/*    // searchWords={['']}*/}
-                                        {/*    searchWords={[doc['_source']['abstract'].slice(150, 300)]}*/}
-                                        {/*    autoEscape={true}*/}
-                                        {/*    textToHighlight={doc['_source']['abstract']}*/}
-                                        {/*    />*/}
+                                        {/*                {*/}
+                                        {/*                    'extractive_summary' in doc['vadis_data'] && !this.state.toggled.includes(ind) && !this.props.detailedView?*/}
+                                        {/*                        // console.log(doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length))*/}
+                                        {/*                        <span>*/}
+                                        {/*                        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
+                                        {/*                        <span><b id={'extractive_summary_' + ind}>{doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length)}</b></span>*/}
+                                        {/*                        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[1]}</span>*/}
+                                        {/*                        <ReactTooltip*/}
+                                        {/*                            anchorId={'extractive_summary_' + ind}*/}
+                                        {/*                            // anchorSelect=".extreme_summary_bold"*/}
+                                        {/*                            place="bottom"*/}
+                                        {/*                            className="tooltip-clr z-pos"*/}
+                                        {/*                            content="Extractive summary"*/}
+                                        {/*                        />*/}
+                                        {/*                        </span>*/}
+                                        {/*                        :*/}
+                                        {/*                        <span>{doc['_source']['abstract']}</span>*/}
+                                        {/*                }*/}
+                                            <Highlighter
+                                                id={'extractive_summary_' + ind}
+                                                highlightClassName="extractive_summary_bold"
+                                                // searchWords={['']}
+                                                searchWords={[doc['vadis_data']['extractive_summary']]}
+                                                autoEscape={true}
+                                                textToHighlight={doc['_source']['abstract']}
+                                            />
                                         {/*<ReactTooltip*/}
                                         {/*    // anchorId={'extreme_summary_' + ind}*/}
                                         {/*    anchorSelect=".extreme_summary_bold"*/}
@@ -229,7 +231,7 @@ class Table extends Component {
                                         {/*    className="tooltip-clr z-pos"*/}
                                         {/*    content="Extreme Summary"*/}
                                         {/*/>*/}
-                                        <span>{doc['_source']['abstract']}</span>
+                                        {/*<span>{doc['_source']['abstract']}</span>*/}
                                         {/*<p><small> - Note: <b>Emphasized text </b>above indicates Extreme Summary from Author's Abstract.</small></p>*/}
                                     </ShowMoreText>
                                 </div>
