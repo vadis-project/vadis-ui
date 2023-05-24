@@ -28,7 +28,7 @@ class App extends Component {
                 //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
                 // });
                 this.setState({
-                    ssoar_ids_list: result['ids'],
+                    ssoar_ids_list: result['random_ids'],
                     // ssoar_ids_list: strDocIds,
                     // ssoar_ids_list: idsFile['ids'],
                 })
