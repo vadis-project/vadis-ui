@@ -14,12 +14,13 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            orig_ids_list: this.props.idsList['year_desc_ids'],
             merged_results: [],
             actual_hits: [],
             hits_count: null,
             from: 0,
             size: 5,
-            sort_filter: null,
+            sort_filter: 'year_desc_ids',
             searched: false,
             search_query: null,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
@@ -47,14 +48,24 @@ class Home extends Component {
 
     componentDidMount() {
         // const {id} = this.props.params;
-        this.getResults(null, 0, 5)
         // if(!id){this.getResults(null, 0, 5)}
+        // this.setState({
+        //     sort_filter: 'year_desc_ids',
+        //     orig_ids_list: this.props.idsList['year_desc_ids']
+        // })
+        this.getResults(null, 0, 5)
     }
 
-    sortBy(filter){
-        this.setState({
-            sort_filter: filter
+    async sortBy(filter){
+        await this.setState({
+            sort_filter: filter,
+            orig_ids_list: this.props.idsList[filter]
         })
+        if(!this.state.searched){
+            this.getResults(null, 0, this.state.size)
+            // this.getResults(null, this.state.from, this.state.size)
+        }
+
     }
 
     // getResultsPost(){
@@ -94,7 +105,6 @@ class Home extends Component {
     //         .then(result => console.log(result))
     //         .catch(error => console.log('error', error));
     // }
-
     getResults(q, from, size) {
         const {id} = this.props.params;
         let strDocIds = []
@@ -106,7 +116,10 @@ class Home extends Component {
         {
             strDocIds[0] = id
         } else if (!id && !q) {
-            strDocIds = this.props.idsList.slice(from, from + size)
+            // strDocIds = this.state.orig_ids_list.slice(from, from + size)
+            strDocIds = this.state.sort_filter === 'year_desc_ids'? this.props.idsList['year_desc_ids'].slice(from, from + size)
+                : this.state.sort_filter === 'vs_count_desc_ids'? this.props.idsList['vs_count_desc_ids'].slice(from, from + size)
+                : this.props.idsList['random_ids'].slice(from, from + size)
         }
         q = q && this.isNumeric(q) ? 'gesis-ssoar-' + q : q;
         // q = q ? this.isNumeric(q) ? 'gesis-ssoar-' + q : q.replace(/[;&/\\#,+()$~%.'":*?<>{}]/g, '') : null;
@@ -124,10 +137,10 @@ class Home extends Component {
                 "size":size,
                 "query": {
                     "bool": {
-                        "must": [  // "filter" doesn't give relevance score
+                        "must": [  // "filter" instead of "must" doesn't give relevance score
                             {
                                 "terms": {
-                                    "_id": this.props.idsList
+                                    "_id": this.state.orig_ids_list
                                 }
                             },
                             {
@@ -284,6 +297,12 @@ class Home extends Component {
     render() {
         let loading = !this.state.hits_count && !this.state.searched && (this.state.actual_hits.length !== this.state.merged_results.length)
         let noResult = this.state.hits_count === 0 && this.state.searched
+        if(this.state.sort_filter==='random_ids' && !this.state.search_query) // update filter to 'year' if the search query gets cleared while 'relevance' selected as filter
+        {
+            this.sortBy('year_desc_ids')
+        }
+
+
         // let noResult = this.state.actual_hits.length === 0
         return (
             <>
@@ -301,7 +320,7 @@ class Home extends Component {
                             </div> : null
                         }
                     <div className='d-flex justify-content-center'>
-                        {this.state.merged_results.length>0? <p className='lbl'><b> {this.state.searched || this.props.params.id ? this.state.hits_count : this.props.idsList.length} Hit(s) </b>&nbsp;&nbsp;&nbsp;</p> : null}
+                        {this.state.merged_results.length>0? <p className='lbl'><b> {this.state.searched || this.props.params.id ? this.state.hits_count : this.state.orig_ids_list.length} Hit(s) </b>&nbsp;&nbsp;&nbsp;</p> : null}
                         {/*{!this.props.params.id?*/}
                             <SearchBar placeholder={'Search by id, title or keyword(s)'} globalSearch
                                     getResults={this.getResults} from={0} size={this.state.size}/>
@@ -312,9 +331,9 @@ class Home extends Component {
                                 <label htmlFor="sort" className='lbl'>Sort by:</label>
                                 <select className='select text-center' name="sort" id="sort" onChange={(event)=>this.sortBy(event.target.value)}>
                                     {/*<option selected={this.state.sort_filter===null} value={null}>Select...</option>*/}
-                                    <option selected={this.state.sort_filter==='relevance'} value="relevance">Relevance</option>
-                                    <option selected={this.state.sort_filter==='year'} value="year">Year</option>
-                                    <option selected={this.state.sort_filter==='linked_vars_c'} value="linked_vars_c">Linked Variables Count</option>
+                                    <option selected={this.state.sort_filter==='random_ids'} value="random_ids" disabled={!this.state.searched}>Relevance</option>
+                                    <option selected={this.state.sort_filter==='year_desc_ids'} value="year_desc_ids">Year</option>
+                                    <option selected={this.state.sort_filter==='vs_count_desc_ids'} value="vs_count_desc_ids">Linked Variables Count</option>
                                     {/*<option selected={this.state.sort_filter==='best_match'} value="best_match" disabled={!this.state.searched}>Best Match</option>*/}
                                 </select>
                             </> : <p></p>
@@ -360,8 +379,8 @@ class Home extends Component {
                                     <button type="button" className="btn btn-link bg-color" disabled={this.state.from < 5}
                                                 onClick={() => this.getResults(null, this.state.from - this.state.size, this.state.size)}>&laquo; Previous
                                     </button>
-                                    <b className='hits'> {this.state.from + 1} - {this.state.from + this.state.size <= this.props.idsList.length? this.state.from + this.state.size : this.props.idsList.length} out of {this.props.idsList.length} Hits </b>
-                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.from + this.state.size >= this.props.idsList.length}
+                                    <b className='hits'> {this.state.from + 1} - {this.state.from + this.state.size <= this.state.orig_ids_list.length? this.state.from + this.state.size : this.state.orig_ids_list.length} out of {this.state.orig_ids_list.length} Hits </b>
+                                    <button type="button" className="btn btn-link bg-color" disabled={this.state.from + this.state.size >= this.state.orig_ids_list.length}
                                             onClick={() => this.getResults(null, this.state.from + this.state.size, this.state.size)}>Next &raquo;
                                     </button>
                                 </span>

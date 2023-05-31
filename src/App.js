@@ -28,7 +28,8 @@ class App extends Component {
                 //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
                 // });
                 this.setState({
-                    ssoar_ids_list: result['random_ids'],
+                    ssoar_ids_list: result,
+                    // ssoar_ids_list: result['random_ids'],
                     // ssoar_ids_list: strDocIds,
                     // ssoar_ids_list: idsFile['ids'],
                 })
@@ -61,6 +62,7 @@ class App extends Component {
         // window.localStorage.removeItem('user');
         // let KeyName = window.localStorage.key(0)
         // console.log(KeyName)
+        // console.log(this.state.ssoar_ids_list)
         return (
             <div className="container">
                 <Header/>
@@ -71,7 +73,10 @@ class App extends Component {
                                             <Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
                                             :
                                             null}/>
-                            <Route path="/:id" element={<Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>}/>
+                            <Route path="/:id" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
+                                <Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
+                                :
+                                null}/>
                         </Routes>
                     </div>
                 </BrowserRouter>

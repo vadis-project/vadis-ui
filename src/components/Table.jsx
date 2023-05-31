@@ -41,10 +41,10 @@ class Table extends Component {
 
     render() {
         // console.log(this.state.toggled)
-        let sorted_ssoar_docs = this.props.sortFilter==='relevance'?this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
-            :this.props.sortFilter==='year'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
+        let sorted_ssoar_docs = this.props.sortFilter==='random_ids'?this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
+            :this.props.sortFilter==='year_desc_ids'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
             // : this.props.sortFilter==='best_match'? this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
-                : this.props.sortFilter==='linked_vars_c'? this.props.ssoar_docs.sort((a,b) => (Object.keys(b.vadis_data.variable_sentences).length > Object.keys(a.vadis_data.variable_sentences).length) ? 1 : ((Object.keys(a.vadis_data.variable_sentences).length > Object.keys(b.vadis_data.variable_sentences).length) ? -1 : 0))
+                : this.props.sortFilter==='vs_count_desc_ids'? this.props.ssoar_docs.sort((a,b) => (Object.keys(b.vadis_data.variable_sentences).length > Object.keys(a.vadis_data.variable_sentences).length) ? 1 : ((Object.keys(a.vadis_data.variable_sentences).length > Object.keys(b.vadis_data.variable_sentences).length) ? -1 : 0))
                     : this.props.ssoar_docs
         // let sorted_ssoar_docs = this.props.ssoar_docs.sort((a,b) => (b.vadis_data.variable_sentences.length < a.vadis_data.variable_sentences.length) ? 1 : ((a.vadis_data.variable_sentences.length < b.vadis_data.variable_sentences.length) ? -1 : 0))
         return <table key={'table'} className={Object.keys(sorted_ssoar_docs).length>1?"table table-striped table-hover":"table"}>
