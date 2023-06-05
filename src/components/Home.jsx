@@ -311,11 +311,16 @@ class Home extends Component {
                         {!this.props.params.id ?
                             <div className='row mgn-top'>
                                 <p>
-                                    <span className='bg-color'><b>VADIS </b></span>
-                                    is to allow for searching und using survey variables in context.
-                                    It analyzes and link variables in context by identifying references to survey variables
-                                    within the full text of research literature, creating semantic links based on these
-                                    references and making the resulting data available as Linked Open Data.
+                                    This is the search demo of the&nbsp;
+                                    {/*<span className='bg-color'><b>VADIS project </b></span> */}
+                                    <a className='bg-color'
+                                        href='https://vadis-project.github.io/'
+                                        target='_blank'
+                                        rel='noreferrer'>
+                                        <b>VADIS</b>
+                                    </a>
+                                    &nbsp;project (VAriable Detection, Interlinking and Summarization).
+                                    Starting with classical document search, it allows for searching and discovering survey variables in context of scholarly publications. The key idea of the VADIS project is to identify references to survey variables within the full text of research literature, creating semantic links based on these references and making the resulting data available.
                                 </p>
                             </div> : null
                         }
