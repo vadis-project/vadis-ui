@@ -2,6 +2,7 @@
   "name": "vadis-ui",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/intro",
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",

@@ -9,7 +9,7 @@ class Icon extends Component {
             this.props.iconName === "Filter" ?
                 <FontAwesomeIcon className='icn-color pdng' icon={faFilter} size={this.props.size?this.props.size:'lg'}/>
                 : this.props.iconName === "PDF" ?
-                    <FontAwesomeIcon className='icn-color' icon={faFilePdf} size={this.props.size?this.props.size:'lg'}/>
+                    <FontAwesomeIcon className='icn-color' icon={faFilePdf} size={this.props.size?this.props.size:'2xl'}/>
                     : this.props.iconName === "CopyAndOpenPdf"?
                         <FontAwesomeIcon className='icn-color' icon={faPaste} size={this.props.size?this.props.size:'lg'}/>
                         : null

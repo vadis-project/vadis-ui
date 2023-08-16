@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import SearchBar from './SearchBar';
 import './styles/Home.sass';
 import Table from "./Table";
-import vadis_intro from '../images/vadis_intro.png'
+import vadisHome from '../images/vadis-home.png'
 
 // import Icon from "./Icon";
 
@@ -313,7 +313,7 @@ class Home extends Component {
                         {!this.props.params.id ?
                             <div className='row mgn-top'>
                                 <p className='col-9 padding-text'>
-                                    The search demo of the&nbsp;
+                                    Welcome to the search demo of the&nbsp;
                                     {/*<span className='bg-color'><b>VADIS project </b></span> */}
                                     <a className='bg-color'
                                         href='https://vadis-project.github.io/'
@@ -324,7 +324,7 @@ class Home extends Component {
                                     &nbsp;project (VAriable Detection, Interlinking and Summarization).
                                     Starting with classical document search, it allows for searching and discovering survey variables in context of scholarly publications. The key idea of the VADIS project is to identify references to survey variables within the full text of research literature, creating semantic links based on these references and making the resulting data available.
                                 </p>
-                                <img className='col-3 img-intro' src={vadis_intro}/>
+                                <img className='col-3 img-home' src={vadisHome} alt=''/>
                             </div> : null
                         }
                     <div className='d-flex justify-content-center'>

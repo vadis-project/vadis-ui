@@ -21,11 +21,12 @@ class Accordions extends Component {
         super(props);
         this.state = {
             range_values: [],
-            sentences_within_range_count: []
+            sentences_within_range_count: [],
+            highlightFlag: false
         };
 
         this.handleChange = this.handleChange.bind(this)
-        // this.searchInPdf = this.searchInPdf.bind(this)
+        this.toggleHighlighting = this.toggleHighlighting.bind(this)
     }
 
     handleChange(event, obj_key, ind) {
@@ -72,6 +73,12 @@ class Accordions extends Component {
         })
     }
 
+    toggleHighlighting(){
+        this.setState({
+            highlightFlag: !this.state.highlightFlag
+        })
+    }
+
     render() {
         let {range_values, sentences_within_range_count}= this.state
         return (
@@ -79,7 +86,7 @@ class Accordions extends Component {
                 Object.entries(this.props.result).map((var_sentences, var_sentences_ind) => (
                 typeof var_sentences[1] === 'object' && Object.keys(var_sentences[1]).length !== 0 ?
                         <Accordion key={var_sentences_ind} className='row' allowMultipleExpanded allowZeroExpanded preExpanded={[var_sentences_ind]}>
-                            <AccordionItem key={var_sentences_ind} className='col-12 accord-margin' uuid={var_sentences_ind}>
+                            <AccordionItem key={var_sentences_ind} className='col-lg-12 accord-margin' uuid={var_sentences_ind}>
                                 {/*<span className="rt-pos">*/}
                                 {/*    <Slider ind={var_sentences_ind}*/}
                                 {/*            label={<span>Slide to filter sentences by score (Selected Range: <b> {(range_values[var_sentences_ind].toString())}</b>)</span>}*/}
@@ -88,23 +95,42 @@ class Accordions extends Component {
                                 {/*            obj_key={var_sentences[0]}*/}
                                 {/*            handleChange={this.handleChange}/>*/}
                                 {/*</span>*/}
+                                <br/>
                                 <AccordionItemHeading>
                                     <AccordionItemButton className='accordion__button'>
                                         <>
-                                            <span id={var_sentences[0]}>{var_sentences[0].includes('variable_sentences')? 'Linked Variable Sentences' : var_sentences[0]}
-                                                <b> ({sentences_within_range_count[var_sentences_ind]}) </b>
+                                            <span id={var_sentences[0]}>{var_sentences[0].includes('variable_sentences')? 'Variable Sentences' : var_sentences[0]}
                                             </span>
                                             <ReactTooltip anchorId={var_sentences[0]}
                                                           place="top"
                                                           // variant="info"
                                                           className="tooltip-clr"
                                                           // float={true}
-                                                          content="Variable sentences list"
+                                                          content="Automatically selected sentences from the publication, which mention variables"
                                                           // content={var_sentences[0]}
                                             />
+                                            <b id='variable-sentences-count'> ({sentences_within_range_count[var_sentences_ind]}) </b>
+                                            <ReactTooltip
+                                                anchorId='variable-sentences-count'
+                                                place="top"
+                                                className="tooltip-clr"
+                                                content="Amount of extracted sentences containing linked variables with high precision"/>
+                                            <div className="form-check form-switch switch-btn" onClick={event => event.stopPropagation()}>
+                                                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={()=>this.toggleHighlighting()}/>
+                                                <label className="form-check-label" id='highlight-tooltip' htmlFor="flexSwitchCheckChecked">
+                                                   Common words highlighting
+                                                    {/*{!this.state.highlightFlag?'Toggle to highlight common words':'Toggle to unhighlight common words'}*/}
+                                                </label>
+                                                <ReactTooltip
+                                                    anchorId='highlight-tooltip'
+                                                    place="top"
+                                                    className="tooltip-clr"
+                                                    content="Toggle to (un)highlight the common words"/>
+                                            </div>
                                         </>
                                     </AccordionItemButton>
                                 </AccordionItemHeading>
+                                {/*<br/>*/}
                                 <AccordionItemPanel className='panel-bg-clr'>
                                     {
                                         Object.entries(var_sentences[1]).map((var_sent, var_sent_ind) => (
@@ -116,7 +142,7 @@ class Accordions extends Component {
                                                         <AccordionItemHeading>
                                                             <AccordionItemButton className={var_sent_ind%2!==0?'accordion__button': 'accordion__button accordion-item-clr'}>
                                                                 <span>
-                                                                        {'common_words' in var_sent[1] && var_sent[1]['common_words'].length!==0?
+                                                                        {'common_words' in var_sent[1] && var_sent[1]['common_words'].length!==0 && this.state.highlightFlag?
                                                                             <Highlighter
                                                                                 highlightClassName="highlight"
                                                                                 searchWords={var_sent[1]['common_words']}
@@ -189,8 +215,7 @@ class Accordions extends Component {
                                                                                     typeof var_content[1] === 'string' && !var_content[0].includes('exploredata-')?
                                                                                     <>
                                                                                         <span>
-                                                                                            <b
-                                                                                                id={var_content[0] + var_sentences_ind + var_sent_ind}
+                                                                                            <b id={var_content[0] + var_sentences_ind + var_sent_ind}
                                                                                                className='orange-clr'>
                                                                                                 {var_content[0] + ': '}
                                                                                             </b> {var_content[1]}
@@ -244,11 +269,17 @@ class Accordions extends Component {
                                                                                         :
                                                                                         <span>
                                                                                             <a className='bg-color'
+                                                                                               id={var_content[0]+var_content_ind}
                                                                                                href={var_content[0].includes('exploredata-') ? 'https://search.gesis.org/variables/' + var_content[0] : null}
                                                                                                target='_blank'
                                                                                                rel='noreferrer'>
                                                                                                 <b>{var_content[0] + ':'}</b>
                                                                                             </a>
+                                                                                            <ReactTooltip
+                                                                                                anchorId={var_content[0]+var_content_ind}
+                                                                                                place="top"
+                                                                                                className="tooltip-clr"
+                                                                                                content="Click on variable ID for details"/>
                                                                                             &nbsp;&nbsp;
                                                                                             <span
                                                                                             //     id={var_content[0] + var_content_ind + Date.now()}
@@ -260,7 +291,7 @@ class Accordions extends Component {
                                                                                             // }}
                                                                                             >
                                                                                                 {/*<u>*/}
-                                                                                               {'common_words' in var_sent[1] && var_sent[1]['common_words'].length !== 0 ?
+                                                                                               {'common_words' in var_sent[1] && var_sent[1]['common_words'].length !== 0 && this.state.highlightFlag?
                                                                                                         <Highlighter
                                                                                                             highlightClassName="highlight"
                                                                                                             searchWords={var_sent[1]['common_words']}

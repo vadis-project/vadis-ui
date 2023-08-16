@@ -4,6 +4,7 @@ import './App.css';
 import Header from './components/Header';
 import Home from "./components/Home";
 import Footers from "./components/Footers";
+import IntroScreen from "./components/IntroScreen";
 // import idsFile from './data/vadis_app_ssoar_list.json'
 
 // import idsList from '../src/data/vadis_app_ssoar_list.json';
@@ -42,7 +43,7 @@ class App extends Component {
             id: id,
         })
         if (id && id !== 'null') {
-            // window.open('http://localhost:3000/' + id, '_blank')
+            // window.open('http://localhost:3000/' + id, '_self')
             window.open('https://demo-vadis.gesis.org:443/' + id, '_self')
         }
         else{
@@ -71,6 +72,10 @@ class App extends Component {
                         <Routes>
                             <Route path="/" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
                                             <Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
+                                            :
+                                            null}/>
+                            <Route path="/intro" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
+                                            <IntroScreen idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
                                             :
                                             null}/>
                             <Route path="/:id" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
