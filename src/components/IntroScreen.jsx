@@ -36,11 +36,11 @@ class IntroScreen extends Component {
 
                         </div>
                         <br/>
-                        <img className='col-12 img-pointer' src={vadisIntro} alt='' onClick={() => window.open('http://localhost:3000/', '_blank')}/>
+                        <img className='col-12 img-pointer' src={vadisIntro} alt='' onClick={() => window.open('https://demo-vadis.gesis.org/', '_blank')}/>
                         {/*<br/>*/}
                         <div className="d-flex justify-content-center">
                             <button type="button" className="btn btn-success"
-                                    onClick={() => window.open('http://localhost:3000/', '_blank')}> Let's Go! <span className='flip-horizontal'>&#x1F3C3;&#x200D;&#x2642;&#xFE0F;</span>
+                                    onClick={() => window.open('https://demo-vadis.gesis.org/', '_blank')}> Let's Go! <span className='flip-horizontal'>&#x1F3C3;&#x200D;&#x2642;&#xFE0F;</span>
                             </button>
                         </div>
                         <br/>
