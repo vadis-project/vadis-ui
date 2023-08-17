@@ -29,7 +29,7 @@ class IntroScreen extends Component {
                             </p>
                             <img className='col-3 img-home2' src={vadisHome} alt=''/>
                         </div>
-                        <br/><br/>
+                        <br/>
                         <div className='col-12 text-center'>
                             <b>Note: </b> <i className='text-bg-success'>&nbsp; Kindly go through the following image for better understanding before heading
                             to the live demo. Thank you and happy summer </i><span className='text-bg-success'>&#9728;</span>
