@@ -116,8 +116,7 @@ class Accordions extends Component {
                                                 className="tooltip-clr"
                                                 content="Amount of extracted sentences containing linked variables with high precision"/>
                                             <div className="form-check form-switch switch-btn" onClick={event => event.stopPropagation()}>
-                                                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"/>
-                                                {/*onChange={()=>this.toggleHighlighting()}*/}
+                                                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={()=>this.toggleHighlighting()}/>
                                                 <label className="form-check-label" id='highlight-tooltip' htmlFor="flexSwitchCheckChecked">
                                                    Common words highlighting
                                                     {/*{!this.state.highlightFlag?'Toggle to highlight common words':'Toggle to unhighlight common words'}*/}
