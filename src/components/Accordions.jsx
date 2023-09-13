@@ -84,7 +84,7 @@ class Accordions extends Component {
         return (
             range_values.length!==0 ?
                 Object.entries(this.props.result).map((var_sentences, var_sentences_ind) => (
-                typeof var_sentences[1] === 'object' && Object.keys(var_sentences[1]).length !== 0 ?
+                typeof var_sentences[1] === 'object' && Object.keys(var_sentences[1]).length !== 0 && var_sentences[0] !== 'vadis_data'?
                         <Accordion key={var_sentences_ind} className='row' allowMultipleExpanded allowZeroExpanded preExpanded={[var_sentences_ind]}>
                             <AccordionItem key={var_sentences_ind} className='col-lg-12 accord-margin' uuid={var_sentences_ind}>
                                 {/*<span className="rt-pos">*/}
