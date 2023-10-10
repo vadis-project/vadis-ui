@@ -149,8 +149,8 @@ class Home extends Component {
                                 "multi_match": {
                                     "query": q,
                                     "type": "best_fields",
-                                    // "fields": ["title", "abstract"],
-                                    "fields": ["title^3", "abstract^2", "fulltext^1"],
+                                    // "fields": ["title", "abstract", "fulltext"],
+                                    "fields": ["title^3", "abstract^2", "pdftotext_fulltext^1"],
                                     "operator": "and"
                                 }
                             }]
