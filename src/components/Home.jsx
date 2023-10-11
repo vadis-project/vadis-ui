@@ -26,7 +26,7 @@ class Home extends Component {
             searched: false,
             search_query: null,
             // vadis_app_endpoint: 'http://193.175.238.92:8000/vadis_app?ssoar_id=',
-            vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?ssoar_id=',
+            vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?doc_id=',
             // outcite_ssoar_endpoint: 'https://demo-outcite.gesis.org/outcite_ssoar/_search?',
             vadis_ssoar_endpoint: 'https://demo-vadis.gesis.org/vadis_ssoar/_search?',
             // outcite_ssoar_endpoint: 'http://svko-outcite.gesis.intra:9200/vadis_ssoar/_search?',
@@ -185,9 +185,9 @@ class Home extends Component {
                         else if (!('dates' in obj['_source'] || 'date_info' in obj['_source'])){
                             obj['_source']['date_info'] = {'issue_date': '0000'}
                         }
-                        let id_num = obj['_id'].split('-')[2]
+                        // let id_num = obj['_id'].split('-')[2]
                         // if (this.props.idsList.includes('"' + obj['_id'] + '"')){
-                        fetch(this.state.vadis_app_endpoint + id_num)
+                        fetch(this.state.vadis_app_endpoint + obj['_id'])
                             .then(resp => resp.json())
                             .then(res => {
                                 let merged_obj = {...obj, ...{'vadis_data': res}}
