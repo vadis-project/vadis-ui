@@ -52,7 +52,7 @@ class Accordions extends Component {
         let rv= []
         Object.entries(this.props.result).map((res, res_ind) => {
             if (!res[0].includes('summary')) {
-                rv.push([0.8, 1.0])
+                rv.push([0.75, 1.0])
                 let c = 0
                 Object.entries(this.props.result[res[0]]).forEach((k, i) => {
                     if (Number(k[1]['score']) >= rv[res_ind][0] && Number(k[1]['score']) <= rv[res_ind][1]) {
@@ -360,8 +360,8 @@ class Accordions extends Component {
                                 </AccordionItemPanel>
                                 <div className="d-flex justify-content-center">
                                     <button type="button" className="btn btn-link bg-color"
-                                            disabled={range_values[2][0] <= 0.6 || sentences_within_range_count[var_sentences_ind] === Object.keys(var_sentences[1]).length}
-                                            onClick={() => range_values[2][0] > 0.6 ? this.handleChange([Number((range_values[2][0]-0.2).toFixed(1)), 1.0], var_sentences[0], var_sentences_ind) : null}> Show more sentences
+                                            disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[var_sentences_ind] === Object.keys(var_sentences[1]).length}
+                                            onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0]-0.25).toFixed(1)), 1.0], var_sentences[0], var_sentences_ind) : null}> Show more sentences
                                     </button>
                                 </div>
                             </AccordionItem>
