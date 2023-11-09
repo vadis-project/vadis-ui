@@ -14,29 +14,29 @@ class App extends Component {
         super(props);
         this.state = {
             id: null,
-            ssoar_ids_list: [],
+            // ssoar_ids_list: [],
             vadis_app_ssoar_list_endpoint: 'https://demo-vadis.gesis.org/ssoar_list'
         }
         this.getParams=this.getParams.bind(this)
     }
 
-    componentDidMount() {
-        // let strDocIds = []
-        fetch(this.state.vadis_app_ssoar_list_endpoint)
-            .then(response => response.json())
-            .then(result => {
-                // result['ids'].forEach((id, i) => {
-                //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
-                // });
-                this.setState({
-                    ssoar_ids_list: result,
-                    // ssoar_ids_list: result['random_ids'],
-                    // ssoar_ids_list: strDocIds,
-                    // ssoar_ids_list: idsFile['ids'],
-                })
-            })
-            .catch(error => console.log('error', error));
-    }
+    // componentDidMount() {
+    //     // let strDocIds = []
+    //     fetch(this.state.vadis_app_ssoar_list_endpoint)
+    //         .then(response => response.json())
+    //         .then(result => {
+    //             // result['ids'].forEach((id, i) => {
+    //             //     strDocIds[i] = '"gesis-ssoar-' + String(id) + '"'
+    //             // });
+    //             this.setState({
+    //                 ssoar_ids_list: result,
+    //                 // ssoar_ids_list: result['random_ids'],
+    //                 // ssoar_ids_list: strDocIds,
+    //                 // ssoar_ids_list: idsFile['ids'],
+    //             })
+    //         })
+    //         .catch(error => console.log('error', error));
+    // }
 
     getParams(id) {
         this.setState({
@@ -70,18 +70,9 @@ class App extends Component {
                 <BrowserRouter>
                     <div>
                         <Routes>
-                            <Route path="/" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
-                                            <Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
-                                            :
-                                            null}/>
-                            <Route path="/intro" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
-                                            <IntroScreen idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
-                                            :
-                                            null}/>
-                            <Route path="/:id" element={this.state.ssoar_ids_list && this.state.ssoar_ids_list.length !== 0 ?
-                                <Home idsList={this.state.ssoar_ids_list} getParams={this.getParams}/>
-                                :
-                                null}/>
+                            <Route path="/" element={<Home getParams={this.getParams}/>}/>
+                            <Route path="/intro" element={<IntroScreen getParams={this.getParams}/>}/>
+                            <Route path="/:id" element={<Home getParams={this.getParams}/>}/>
                         </Routes>
                     </div>
                 </BrowserRouter>

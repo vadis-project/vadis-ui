@@ -1,4 +1,4 @@
-import {Component} from "react";
+import React, {Component} from "react";
 import './styles/SearchBar.sass'
 
 class SearchBar extends Component {
@@ -6,7 +6,7 @@ class SearchBar extends Component {
         super(props);
 
         this.state = {
-            input: null,
+            input: '',
         };
         this.handleChange = this.handleChange.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
@@ -15,6 +15,7 @@ class SearchBar extends Component {
 
     handleChange(e) {
         this.setState({input: e.target.value});
+
         if(!e.target.value){
             this.props.getResults(null, 0, this.props.size)
         }
@@ -33,6 +34,7 @@ class SearchBar extends Component {
     render() {
         return <div className="input-group input-group-sm mb-3 w-50 padding">
             <input type="search" className="form-control rounded" placeholder={this.props.placeholder}
+                   value={this.state.input}
                    aria-label="Search"
                    aria-describedby="search-addon" onChange={this.handleChange} onKeyDown={this.handleKeyDown}/>
             <button type="button" className="btn btn-outline-primary"

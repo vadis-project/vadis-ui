@@ -41,12 +41,13 @@ class Table extends Component {
 
     render() {
         // console.log(this.state.toggled)
-        let sorted_ssoar_docs = this.props.sortFilter==='random_ids'?this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
-            :this.props.sortFilter==='year_desc_ids'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
-            // : this.props.sortFilter==='best_match'? this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
-                : this.props.sortFilter==='vs_count_desc_ids'? this.props.ssoar_docs.sort((a,b) => (Object.keys(b.vadis_data.variable_sentences).length > Object.keys(a.vadis_data.variable_sentences).length) ? 1 : ((Object.keys(a.vadis_data.variable_sentences).length > Object.keys(b.vadis_data.variable_sentences).length) ? -1 : 0))
-                    : this.props.ssoar_docs
-        // let sorted_ssoar_docs = this.props.ssoar_docs.sort((a,b) => (b.vadis_data.variable_sentences.length < a.vadis_data.variable_sentences.length) ? 1 : ((a.vadis_data.variable_sentences.length < b.vadis_data.variable_sentences.length) ? -1 : 0))
+        let sorted_ssoar_docs = this.props.ssoar_docs
+        // let sorted_ssoar_docs = this.props.sortFilter==='random_ids'?this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
+        //     :this.props.sortFilter==='year_desc_ids'?this.props.ssoar_docs.sort((a,b) => (b._source.date_info.issue_date > a._source.date_info.issue_date) ? 1 : ((a._source.date_info.issue_date > b._source.date_info.issue_date) ? -1 : 0))
+        //     // : this.props.sortFilter==='best_match'? this.props.ssoar_docs.sort((a,b) => (b._score > a._score) ? 1 : ((a._score > b._score) ? -1 : 0))
+        //         : this.props.sortFilter==='vs_count_desc_ids'? this.props.ssoar_docs.sort((a,b) => (Object.keys(b.vadis_data.variable_sentences).length > Object.keys(a.vadis_data.variable_sentences).length) ? 1 : ((Object.keys(a.vadis_data.variable_sentences).length > Object.keys(b.vadis_data.variable_sentences).length) ? -1 : 0))
+        //             : this.props.ssoar_docs
+        // // let sorted_ssoar_docs = this.props.ssoar_docs.sort((a,b) => (b.vadis_data.variable_sentences.length < a.vadis_data.variable_sentences.length) ? 1 : ((a.vadis_data.variable_sentences.length < b.vadis_data.variable_sentences.length) ? -1 : 0))
         return <table key={'table'} className={Object.keys(sorted_ssoar_docs).length>1?"table table-striped table-hover":"table"}>
             <tbody key={'table-body'}>
             {sorted_ssoar_docs.map((doc, ind) => (
@@ -78,6 +79,18 @@ class Table extends Component {
                                         <span className="orange-color fw-normal" key='src_journal'>
                                         <i> ({doc['_source']['dates']['issue_date']}) </i>
                                     </span> : null}
+                                {'language' in doc['_source'] && doc['_source']['language'] ?
+                                    <>
+                                                    <span id={'language' + ind} className='fw-normal bg-color' key='src_journal'>
+                                                        <i> ({doc['_source']['language']}) </i>
+                                                    </span>
+                                        <ReactTooltip anchorId={'language' + ind}
+                                                      place="top"
+                                                      className="tooltip-clr"
+                                                      content="Document's language"/>
+                                    </>
+                                    : null
+                                }
                             </h6>
                         </div>
                         <div key={'url' + ind} className='col-1 text-end bg-color pdg'>
@@ -103,32 +116,18 @@ class Table extends Component {
                             {/*{doc['_source']['pdf']}*/}
                         </div>
 
-                        {'vadis_data' in doc ?
+                        {'vadis_data' in doc['_source'] ?
                             <>
                                 {
-                                    'summary' in doc['vadis_data'] ?
+                                    'abs_summary' in doc['_source']['vadis_data'] ?
                                         <div key={'summary' + ind} className='col-12 small-txt align-txt'>
-                                            <span id={'summary' + ind}>{doc['vadis_data']['summary']}</span>
+                                            <span id={'summary' + ind}>{doc['_source']['vadis_data']['abs_summary']}</span>
                                             <ReactTooltip anchorId={'summary' + ind}
                                                           place="top"
                                                           // variant="light"
                                                           className="tooltip-clr"
                                                           // float={true}
                                                           content="Automatically generated summary of the article"/>
-                                            {'language' in doc['_source'] && doc['_source']['language'] ?
-                                                <>
-                                                    <span id={'language' + ind} className='bg-color' key='src_journal'>
-                                                        <i> ({doc['_source']['language']}) </i>
-                                                    </span>
-                                                    <ReactTooltip anchorId={'language' + ind}
-                                                                  place="top"
-                                                                  // variant="light"
-                                                                  className="tooltip-clr"
-                                                                  // float={true}
-                                                                  content="Document's language"/>
-                                                </>
-                                                : null
-                                            }
                                         </div>
                                         : null
                                 }
@@ -150,10 +149,10 @@ class Table extends Component {
                                 )) : null}
                             </div>
                         {
-                            'variable_sentences' in doc['vadis_data'] ?
+                            'variable_sentences' in doc['_source']['vadis_data'] ?
                                 <div key={'var_sents' + ind} className='col-2 text-end pdg'>
                                         <span id={'sentences' + ind} className='my-badge small-txt'>
-                                            Total Sentences: {Object.keys(doc['vadis_data']['variable_sentences']).length}
+                                            Total Sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}
                                         </span>
                                     <ReactTooltip anchorId={'sentences' + ind}
                                                   place="top"
@@ -240,7 +239,7 @@ class Table extends Component {
                                                 id={'extractive_summary_' + ind}
                                                 highlightClassName="extractive_summary_bold"
                                                 // searchWords={['']}
-                                                searchWords={[doc['vadis_data']['extractive_summary']]}
+                                                searchWords={[doc['_source']['vadis_data']['ext_summary']]}
                                                 autoEscape={true}
                                                 textToHighlight={doc['_source']['abstract']}
                                             />
@@ -272,8 +271,8 @@ class Table extends Component {
                                             {/*<span className="sr-only">Loading...</span>*/}
                                         </div>
                                     </div>
-                                    : 'vadis_data' in doc && !('error' in doc['vadis_data']) ?
-                                        <Accordions key={'Accordions' + ind} result={doc['vadis_data']} pdfId={doc['_id'].split('-')[2]}/>
+                                    : 'vadis_data' in doc['_source'] && !('error' in doc['_source']['vadis_data']) ?
+                                        <Accordions key={'Accordions' + ind} result={doc['_source']['vadis_data']} pdfId={doc['_id'].split('-')[2]}/>
                                         : <div key={'dv'} className='d-flex justify-content-center'>
                                             <span className='orange-color'>
                                                 Something Went Wrong!

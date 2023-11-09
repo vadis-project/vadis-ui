@@ -73,52 +73,47 @@ class Accordions extends Component {
         })
     }
 
-    toggleHighlighting(){
+    toggleHighlighting() {
         this.setState({
             highlightFlag: !this.state.highlightFlag
         })
     }
 
     render() {
-        let {range_values, sentences_within_range_count}= this.state
+        let {range_values, sentences_within_range_count} = this.state
         return (
-            range_values.length!==0 ?
-                Object.entries(this.props.result).map((var_sentences, var_sentences_ind) => (
-                typeof var_sentences[1] === 'object' && Object.keys(var_sentences[1]).length !== 0 && var_sentences[0] !== 'vadis_data'?
-                        <Accordion key={var_sentences_ind} className='row' allowMultipleExpanded allowZeroExpanded preExpanded={[var_sentences_ind]}>
-                            <AccordionItem key={var_sentences_ind} className='col-lg-12 accord-margin' uuid={var_sentences_ind}>
-                                {/*<span className="rt-pos">*/}
-                                {/*    <Slider ind={var_sentences_ind}*/}
-                                {/*            label={<span>Slide to filter sentences by score (Selected Range: <b> {(range_values[var_sentences_ind].toString())}</b>)</span>}*/}
-                                {/*            min={0} max={1}*/}
-                                {/*            step={0.1} defaultValue={range_values[var_sentences_ind]}*/}
-                                {/*            obj_key={var_sentences[0]}*/}
-                                {/*            handleChange={this.handleChange}/>*/}
-                                {/*</span>*/}
+            range_values.length !== 0 ?
+                Object.entries(this.props.result).map((key_val, key_val_ind) => (
+                    Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
+                        <Accordion key={key_val_ind} className='row' allowMultipleExpanded allowZeroExpanded
+                                   preExpanded={[key_val_ind]}>
+                            <AccordionItem key={key_val_ind} className='col-lg-12 accord-margin' uuid={key_val_ind}>
                                 <br/>
                                 <AccordionItemHeading>
                                     <AccordionItemButton className='accordion__button'>
                                         <>
-                                            <span id={var_sentences[0]}>{var_sentences[0].includes('variable_sentences')? 'Variable Sentences' : var_sentences[0]}
+                                            <span
+                                                id={key_val[0]}>{key_val[0].includes('variable_sentences') ? 'Variable Sentences' : key_val[0]}
                                             </span>
-                                            <ReactTooltip anchorId={var_sentences[0]}
+                                            <ReactTooltip anchorId={key_val[0]}
                                                           place="top"
-                                                          // variant="info"
                                                           className="tooltip-clr"
-                                                          // float={true}
                                                           content="Automatically selected sentences from the publication, which mention variables"
-                                                          // content={var_sentences[0]}
                                             />
-                                            <b id='variable-sentences-count'> ({sentences_within_range_count[var_sentences_ind]}) </b>
+                                            <b id='variable-sentences-count'> ({sentences_within_range_count[key_val_ind]}) </b>
                                             <ReactTooltip
                                                 anchorId='variable-sentences-count'
                                                 place="top"
                                                 className="tooltip-clr"
                                                 content="Amount of extracted sentences containing linked variables with high precision"/>
-                                            <div className="form-check form-switch switch-btn" onClick={event => event.stopPropagation()}>
-                                                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={()=>this.toggleHighlighting()}/>
-                                                <label className="form-check-label" id='highlight-tooltip' htmlFor="flexSwitchCheckChecked">
-                                                   Common words highlighting
+                                            <div className="form-check form-switch switch-btn"
+                                                 onClick={event => event.stopPropagation()}>
+                                                <input className="form-check-input" type="checkbox" role="switch"
+                                                       id="flexSwitchCheckChecked"
+                                                       onChange={() => this.toggleHighlighting()}/>
+                                                <label className="form-check-label" id='highlight-tooltip'
+                                                       htmlFor="flexSwitchCheckChecked">
+                                                    Common words highlighting
                                                     {/*{!this.state.highlightFlag?'Toggle to highlight common words':'Toggle to unhighlight common words'}*/}
                                                 </label>
                                                 <ReactTooltip
@@ -133,56 +128,62 @@ class Accordions extends Component {
                                 {/*<br/>*/}
                                 <AccordionItemPanel className='panel-bg-clr'>
                                     {
-                                        Object.entries(var_sentences[1]).map((var_sent, var_sent_ind) => (
-                                            typeof var_sent[1] === 'object' && Object.keys(var_sent[1]).length !== 0 ?
-                                                <Accordion key={var_sentences_ind + var_sent_ind} className='row r-margin' allowMultipleExpanded allowZeroExpanded>
+                                        key_val[1].map((var_sent, var_sent_ind) => (
+                                            typeof var_sent === 'object' && Object.keys(var_sent).length !== 0 ?
+                                                <Accordion key={String(key_val_ind) + String(var_sent_ind)}
+                                                           className='row r-margin' allowMultipleExpanded
+                                                           allowZeroExpanded>
                                                     {
-                                                        'score' in var_sent[1] && Number(var_sent[1]['score']) >= range_values[var_sentences_ind][0] && Number(var_sent[1]['score']) <= range_values[var_sentences_ind][1]?
-                                                        <AccordionItem key={var_sentences_ind + var_sent_ind} className='col-12'>
-                                                        <AccordionItemHeading>
-                                                            <AccordionItemButton className={var_sent_ind%2!==0?'accordion__button': 'accordion__button accordion-item-clr'}>
-                                                                <span>
-                                                                        {'common_words' in var_sent[1] && var_sent[1]['common_words'].length!==0 && this.state.highlightFlag?
-                                                                            <Highlighter
-                                                                                highlightClassName="highlight"
-                                                                                searchWords={var_sent[1]['common_words']}
-                                                                                autoEscape={true}
-                                                                                textToHighlight={var_sent[0]}
-                                                                            />
-                                                                            :
-                                                                            var_sent[0]
-                                                                        }
-                                                                </span>
-                                                                {
-                                                                    'score' in var_sent[1]?
-                                                                        <>
-                                                                           &nbsp;&nbsp;<span>
-                                                                                (<i id={"var_score" + var_sentences_ind + var_sent_ind}
-                                                                                   className='orange-clr'>
+                                                        'score' in var_sent && Number(var_sent['score']) >= range_values[key_val_ind][0] && Number(var_sent['score']) <= range_values[key_val_ind][1] ?
+                                                            <AccordionItem
+                                                                key={String(key_val_ind) + String(var_sent_ind)}
+                                                                className='col-12'>
+                                                                <AccordionItemHeading>
+                                                                    <AccordionItemButton
+                                                                        className={var_sent_ind % 2 !== 0 ? 'accordion__button' : 'accordion__button accordion-item-clr'}>
+                                                                        <span>
+                                                                            {'common_words' in var_sent && var_sent['common_words'].length !== 0 && this.state.highlightFlag ?
+                                                                                <Highlighter
+                                                                                    highlightClassName="highlight"
+                                                                                    searchWords={var_sent['common_words']}
+                                                                                    autoEscape={true}
+                                                                                    textToHighlight={var_sent['sentence']}
+                                                                                />
+                                                                                :
+                                                                                var_sent['sentence']
+                                                                            }
+                                                                        </span>
+                                                                        {
+                                                                            'score' in var_sent ?
+                                                                                <>
+                                                                                    &nbsp;&nbsp;<span>
+                                                                                (<i id={"var_score" + String(key_val_ind) + String(var_sent_ind)}
+                                                                                    className='orange-clr'>
                                                                                     score:
-                                                                                </i> {var_sent[1]['score']})
+                                                                                </i> {var_sent['score']})
                                                                             </span>
-                                                                            <ReactTooltip
-                                                                                anchorId={"var_score" + var_sentences_ind + var_sent_ind}
-                                                                                place="top"
-                                                                                // variant="info"
-                                                                                className="tooltip-clr"
-                                                                                // float={true}
-                                                                                content="Sentence confidence to contain a variable"/>
-                                                                        </>
-                                                                        : null
-                                                                }
-                                                                <span className='copy-icon' id={String(var_sentences_ind) + String(var_sent_ind)}
-                                                                      onClick={async ()=> {
-                                                                          await navigator.clipboard.writeText(var_sent[0].toString());
-                                                                          window.open('https://demo-vadis.gesis.org:443/_pdf/'+this.props.pdfId+'.pdf#search="'+var_sent[0]+'"', '_blank');
-                                                                          // var_content[1].substring(0,25) //#search="text..." Individual parameters, together with their values (separated by & or #), can be no greater than 32 characters in length.
+                                                                                    <ReactTooltip
+                                                                                        anchorId={"var_score" + String(key_val_ind) + String(var_sent_ind)}
+                                                                                        place="top"
+                                                                                        // variant="info"
+                                                                                        className="tooltip-clr"
+                                                                                        // float={true}
+                                                                                        content="Sentence confidence to contain a variable"/>
+                                                                                </>
+                                                                                : null
+                                                                        }
+                                                                        <span className='copy-icon'
+                                                                              id={String(key_val_ind) + String(var_sent_ind)}
+                                                                              onClick={async () => {
+                                                                                  await navigator.clipboard.writeText(var_sent['sentence'].toString());
+                                                                                  window.open('https://demo-vadis.gesis.org:443/_pdf/' + this.props.pdfId + '.pdf#search="' + var_sent['sentence'] + '"', '_blank');
+                                                                                  // var_content[1].substring(0,25) //#search="text..." Individual parameters, together with their values (separated by & or #), can be no greater than 32 characters in length.
 
-                                                                      }}
-                                                                >
+                                                                              }}
+                                                                        >
                                                                         <Icon iconName='CopyAndOpenPdf'/>
                                                                         <ReactTooltip
-                                                                            anchorId={String(var_sentences_ind) + String(var_sent_ind)}
+                                                                            anchorId={String(key_val_ind) + String(var_sent_ind)}
                                                                             place="top"
                                                                             // variant="info"
                                                                             className="sentence-tooltip-style tooltip-clr"
@@ -199,156 +200,82 @@ class Accordions extends Component {
                                                                             </ol>
                                                                         </ReactTooltip>
                                                                 </span>
-                                                            </AccordionItemButton>
-                                                        </AccordionItemHeading>
-                                                        <AccordionItemPanel className='panel-bg-clr accord-margin'>
-                                                            <Accordion key={'content' + var_sentences_ind + var_sent_ind} className='row r-margin'>
-                                                                {
-                                                                    Object.entries(var_sent[1]).map((var_content, var_content_ind) => (
-
-                                                                        var_content[0] === 'score' || var_content[0] === 'common_words' || var_content[0]==='id' || var_content[0]==='type' ? null  // fields not to display
-                                                                            :
-                                                                        <AccordionItem key={var_sentences_ind + var_sent_ind + var_content_ind} className='col-12 accord-margin'>
-                                                                            {
-                                                                                // var_content[0] === 'score' || var_content[0] === 'common_words' || var_content[0]==='type' || var_content[0]==='id'?null
-                                                                                //     :
-                                                                                    typeof var_content[1] === 'string' && !var_content[0].includes('exploredata-')?
-                                                                                    <>
-                                                                                        <span>
-                                                                                            <b id={var_content[0] + var_sentences_ind + var_sent_ind}
-                                                                                               className='orange-clr'>
-                                                                                                {var_content[0] + ': '}
-                                                                                            </b> {var_content[1]}
-                                                                                        </span>
-                                                                                        <ReactTooltip
-                                                                                            anchorId={var_content[0] + var_sentences_ind + var_sent_ind}
-                                                                                            place="top"
-                                                                                            // variant="info"
-                                                                                            className="tooltip-clr"
-                                                                                            // float={true}
-                                                                                            content={var_content[0]==='type'?"Variable detection method": var_content[0]==='id'? 'id' : null}/>
-                                                                                    </>
-                                                                                    : Array.isArray(var_content[1]) ?
-                                                                                        var_content[1].length !== 0?
+                                                                    </AccordionItemButton>
+                                                                </AccordionItemHeading>
+                                                                <AccordionItemPanel
+                                                                    className='panel-bg-clr accord-margin'>
+                                                                    <Accordion
+                                                                        key={'content' + String(key_val_ind) + String(var_sent_ind)}
+                                                                        className='row r-margin'>
+                                                                        {
+                                                                            'variables' in var_sent && var_sent['variables'].length !== 0 ?
+                                                                                var_sent['variables'].map((var_content, var_content_ind) =>
+                                                                                    <AccordionItem
+                                                                                        key={String(key_val_ind) + String(var_sent_ind) + String(var_content_ind)}
+                                                                                        className='col-12 accord-margin'>
+                                                                                        {
                                                                                             <>
-                                                                                                <b id={var_content[0] + var_sent_ind + var_content_ind} className='orange-clr inline-div'>
-                                                                                                    {var_content[0] + ': '}
-                                                                                                </b>
-                                                                                                <ShowMoreText lines={1}
-                                                                                                              more={<span className='orange-clr'>Show More</span>}
-                                                                                                              less={<span className='orange-clr'>Show less</span>}
-                                                                                                              className="orange-clr inline-div"
-                                                                                                              expanded={false}
-                                                                                                              width={2000}
-                                                                                                              truncatedEndingComponent={"... "}
-                                                                                                              anchorClass='show-more-less-clickable bg-color'
-
-                                                                                                >
-                                                                                                    {/*{var_content[1].join(', ')}*/}
-                                                                                                    {var_content[1].map((v, v_ind)=>{
-                                                                                                        return <span>
-                                                                                                        &nbsp;<a className='bg-color'
-                                                                                                                  href={v.includes('exploredata-') ? 'https://search.gesis.org/variables/' + v : null}
-                                                                                                                  target='_blank'
-                                                                                                                  rel='noreferrer'>
-                                                                                                                    {v}
-                                                                                                                </a>&nbsp;
-                                                                                                        </span>
-                                                                                                    })}
-                                                                                            </ShowMoreText>
+                                                                                                <span>
+                                                                                                    <a id={var_content['var_id'] + String(key_val_ind) + String(var_sent_ind)}
+                                                                                                       className='bg-color'
+                                                                                                       href={var_content['var_id'].includes('exploredata-') ? 'https://search.gesis.org/variables/' + var_content['var_id'] : null}
+                                                                                                       target='_blank'
+                                                                                                       rel='noreferrer'>
+                                                                                                        <b>{var_content['var_id'] + ':'}</b>
+                                                                                                    </a> &nbsp;{var_content['var_text']}
+                                                                                                </span>
                                                                                                 <ReactTooltip
-                                                                                                    anchorId={var_content[0] + var_sent_ind + var_content_ind}
+                                                                                                    anchorId={var_content['var_id'] + String(key_val_ind) + String(var_sent_ind)}
                                                                                                     place="top"
-                                                                                                    // variant="info"
                                                                                                     className="tooltip-clr"
-                                                                                                    // float={true}
-                                                                                                    content="Additional related variables"/>
-
+                                                                                                    content="Click on variable ID for details"/>
                                                                                             </>
-                                                                                            : null
-                                                                                        :
-                                                                                        <span>
-                                                                                            <a className='bg-color'
-                                                                                               id={var_content[0]+var_content_ind}
-                                                                                               href={var_content[0].includes('exploredata-') ? 'https://search.gesis.org/variables/' + var_content[0] : null}
-                                                                                               target='_blank'
-                                                                                               rel='noreferrer'>
-                                                                                                <b>{var_content[0] + ':'}</b>
-                                                                                            </a>
-                                                                                            <ReactTooltip
-                                                                                                anchorId={var_content[0]+var_content_ind}
-                                                                                                place="top"
-                                                                                                className="tooltip-clr"
-                                                                                                content="Click on variable ID for details"/>
-                                                                                            &nbsp;&nbsp;
-                                                                                            <span
-                                                                                            //     id={var_content[0] + var_content_ind + Date.now()}
-                                                                                            //     className='clickable-text' onClick={async ()=> {
-                                                                                            //     await navigator.clipboard.writeText(var_content[1].toString());
-                                                                                            //     window.open('http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf#search="'+var_content[1]+'"');
-                                                                                            //     // var_content[1].substring(0,25) //#search="text..." Individual parameters, together with their values (separated by & or #), can be no greater than 32 characters in length.
-                                                                                            //
-                                                                                            // }}
-                                                                                            >
-                                                                                                {/*<u>*/}
-                                                                                               {'common_words' in var_sent[1] && var_sent[1]['common_words'].length !== 0 && this.state.highlightFlag?
-                                                                                                        <Highlighter
-                                                                                                            highlightClassName="highlight"
-                                                                                                            searchWords={var_sent[1]['common_words']}
-                                                                                                            autoEscape={true}
-                                                                                                            textToHighlight={var_content[1]}/>
-                                                                                                        :
-                                                                                                        var_content[1]
-                                                                                               }
-                                                                                               {/*</u>*/}
-                                                                                               {/* <ReactTooltip*/}
-                                                                                               {/*     anchorId={var_content[0] + var_content_ind + Date.now()}*/}
-                                                                                               {/*     place="top"*/}
-                                                                                               {/*     variant="info"*/}
-                                                                                               {/*     // float={true}*/}
-                                                                                               {/* >*/}
-                                                                                               {/*     <ol>*/}
-                                                                                               {/*         Click will copy the corresponding sentence and open the PDF on new tab to search for the copied text.*/}
-                                                                                               {/*         <br/>*/}
-                                                                                               {/*         Press following buttons in sequence to search:*/}
-                                                                                               {/*         <li>*/}
-                                                                                               {/*             Ctrl + F*/}
-                                                                                               {/*         </li>*/}
-                                                                                               {/*         <li>*/}
-                                                                                               {/*             Ctrl + V*/}
-                                                                                               {/*         </li>*/}
-                                                                                               {/*         <li>*/}
-                                                                                               {/*             Enter*/}
-                                                                                               {/*         </li>*/}
-                                                                                               {/*     </ol>*/}
-                                                                                               {/* </ReactTooltip>*/}
-                                                                                            </span>
-                                                                                            {/*<PdfViewer/>*/}
+                                                                                        }
+                                                                                    </AccordionItem>
+                                                                                )
+                                                                                : null
+                                                                        }
+                                                                        {
+                                                                            'similar_variables' in var_sent && var_sent['similar_variables'].length !== 0 ?
+                                                                                <AccordionItem>
+                                                                                    <>
+                                                                                        <b id={'similar_vars' + String(var_sent_ind)}
+                                                                                           className='orange-clr inline-div'>
+                                                                                            {'similar variables' + ': '}
+                                                                                        </b>
+                                                                                        <ShowMoreText lines={1}
+                                                                                                      more={<span className='orange-clr'>Show More</span>}
+                                                                                                      less={<span className='orange-clr'>Show less</span>}
+                                                                                                      className="orange-clr inline-div"
+                                                                                                      expanded={false}
+                                                                                                      width={1800}
+                                                                                                      truncatedEndingComponent={"... "}
+                                                                                                      anchorClass='show-more-less-clickable bg-color'>
+                                                                                            {var_sent['similar_variables'].map((v, v_ind) => {
+                                                                                                return <span>
+                                                                                                        &nbsp;
+                                                                                                    <a className='bg-color'
+                                                                                                    href={v.includes('exploredata-') ? 'https://search.gesis.org/variables/' + v : null}
+                                                                                                    target='_blank'
+                                                                                                    rel='noreferrer'>
+                                                                                                        {v}
+                                                                                                    </a>&nbsp;
+                                                                                                </span>
+                                                                                            })}
+                                                                                        </ShowMoreText>
+                                                                                        <ReactTooltip
+                                                                                            anchorId={'similar_vars' + String(var_sent_ind)}
+                                                                                            place="top"
+                                                                                            className="tooltip-clr"
+                                                                                            content="Additional related variables"/>
 
-                                                                                            {/*<div id="mypdf">*/}
-                                                                                            {/*    <iframe src="http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf#search=inequality" width="500" height="500" frameBorder="0"*/}
-                                                                                            {/*            scrolling="no">*/}
-                                                                                            {/*        <p>Your web browser doesn't support iframes.</p>*/}
-                                                                                            {/*    </iframe>*/}
-                                                                                            {/*</div>*/}
-
-                                                                                            {/*<object data="http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf#search=Inequality" type="application/pdf" width="500" height="500">*/}
-                                                                                            {/*    <p>Alternative text - include a link <a href="http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf">to the PDF!</a></p>*/}
-                                                                                            {/*</object>*/}
-
-                                                                                            {/*<object data="http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf#search=inequality" type="application/pdf" width="500" height="500">*/}
-                                                                                            {/*    <p>Alternative text - include a link <a href="http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf">to the PDF!</a></p>*/}
-                                                                                            {/*</object>*/}
-
-                                                                                            {/*<embed src= "http://svko-outcite.gesis.intra:8000/SSOAR/11658.pdf" width= "500" height= "375"/>*/}
-                                                                                        </span>
-                                                                            }
-                                                                        </AccordionItem>
-                                                                    ))
-                                                                }
-                                                            </Accordion>
-                                                        </AccordionItemPanel>
-                                                    </AccordionItem>
+                                                                                    </>
+                                                                                </AccordionItem>
+                                                                                : null
+                                                                        }
+                                                                    </Accordion>
+                                                                </AccordionItemPanel>
+                                                            </AccordionItem>
                                                             :
                                                             null
                                                     }
@@ -360,8 +287,8 @@ class Accordions extends Component {
                                 </AccordionItemPanel>
                                 <div className="d-flex justify-content-center">
                                     <button type="button" className="btn btn-link bg-color"
-                                            disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[var_sentences_ind] === Object.keys(var_sentences[1]).length}
-                                            onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0]-0.25).toFixed(1)), 1.0], var_sentences[0], var_sentences_ind) : null}> Show more sentences
+                                            disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[key_val_ind] === key_val[1].length}
+                                            onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0]-0.25).toFixed(1)), 1.0], key_val[0], key_val_ind) : null}> Show more sentences
                                     </button>
                                 </div>
                             </AccordionItem>
