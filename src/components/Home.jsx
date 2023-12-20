@@ -137,7 +137,6 @@ class Home extends Component {
                             // }
                         ]
             })
-        console.log(query)
         let requestOptions = {
             method: 'POST',
             headers: myHeaders,
@@ -207,7 +206,7 @@ class Home extends Component {
                             <SearchBar placeholder={'Search by id, title or keyword(s)'} globalSearch
                                     getResults={this.getResults} from={0} size={this.state.size} serchQuery={this.state.search_query}/>
                             {/*:null}*/}
-                        {this.state.actual_hits.length>1?
+                        {this.state.actual_hits.length>1 || this.state.searched?
                             <>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                 <label htmlFor="sort" className='lbl'>Sort by:</label>
