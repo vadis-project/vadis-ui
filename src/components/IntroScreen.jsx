@@ -31,8 +31,7 @@ class IntroScreen extends Component {
                         </div>
                         <br/>
                         <div className='col-12 text-center'>
-                            <b>Note: </b> <i className='text-bg-success'>&nbsp; Kindly go through the following image for better understanding before heading
-                            to the live demo. Thank you and happy summer </i><span className='text-bg-success'>&#9728;</span>
+                            <b>Note: </b> <i className='text-bg-success'>&nbsp; Kindly go through the following image for better understanding of the live demo. Thank you! </i><span className='text-bg-success'>&#128578;</span>
 
                         </div>
                         <br/>

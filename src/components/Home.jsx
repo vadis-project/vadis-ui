@@ -195,6 +195,16 @@ class Home extends Component {
                                     </a>
                                     &nbsp;project (VAriable Detection, Interlinking and Summarization).
                                     Starting with classical document search, it allows for searching and discovering survey variables in context of scholarly publications. The key idea of the VADIS project is to identify references to survey variables within the full text of research literature, creating semantic links based on these references and making the resulting data available.
+                                    <br/><br/>
+                                    Need help? Visit&nbsp;
+                                    <a className='bg-color'
+                                       href='https://demo-vadis.gesis.org/intro'
+                                       target='_self'
+                                       rel='noreferrer'>
+                                        <b>introductory page</b>
+                                    </a>
+                                    &nbsp;for wholesome understanding of the data displayed.
+
                                 </p>
                                 <img className='col-3 img-home' src={vadisHome} alt=''/>
                             </div> : null
