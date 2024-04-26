@@ -115,12 +115,131 @@ class Table extends Component {
                             }
                             {/*{doc['_source']['pdf']}*/}
                         </div>
+                        <div key={'authors' + ind} className='col-12 small-txt bg-color'>
+                            {'authors' in doc['_source'] ? doc['_source']['authors'].map((author, i) => (
+                                <>
+                                        <span id={'author' + i + ind} className="fw-normal" key={i}>
+                                            &#x2022; {'name' in author ? author['name'] : author['name_string']}&nbsp;
+                                        </span>
+                                    <ReactTooltip anchorId={'author' + i + ind}
+                                                  place="top"
+                                        // variant="light"
+                                                  className="tooltip-clr"
+                                        // float={true}
+                                                  content="Author"/>
+                                </>
+                            )) : null}
+                        </div>
+                        {
+                            'source_info' in doc['_source'] && 'src_journal' in doc['_source']['source_info'] ?
+                                <div key={'source_info' + ind} className='col-12 small-txt bg-color'>
+                                <span className="fw-normal" key='src_journal'>
+                                    <i id={'source_info' + ind}> {doc['_source']['source_info']['src_journal']} </i>
+                                    <ReactTooltip anchorId={'source_info' + ind}
+                                                  place="top"
+                                        // variant="light"
+                                                  className="tooltip-clr"
+                                        // float={true}
+                                                  content="Source"/>
+                                </span>
+                                </div> : null
+                        }
+                        {
+                            'abstract' in doc['_source'] && doc['_source']['abstract'] ?
+                                <>
+                                    <div id={'abstract' + ind} className='col-12 small-txt align-txt'>
+                                        <ShowMoreText width={0}
+                                                      lines={this.props.detailedView ? 0 : 1}
+                                                      anchorClass='show-more-less-clickable bg-color'
+                                                      more="Show more"
+                                                      less="Show less"
+                                                      className="content-css"
+                                                      expanded={false}
+                                                      truncatedEndingComponent={"... "}
+                                            // onClick={()=>this.toggleMoreLess(ind)}
+                                        >
+                                            {/*<span>This pape<b>r addresses the 'old' topic of contextua</b>l effects on voting behaviour. Current multilevel analysis techniques provide a powerful tool to (re-)examine such regional influences on individual voting decisions. We apply multilevel analysis to German electoral data. Our results prove evidence of two contextual effects. The unemployment level of the district has a positive effect on SPD support, which confirms the local equivalent of the economic vote model. Furthermore the global strength of a party in a district has a positive effect on the individual decision to support that party. This is a confirmation of what has been labelled as breakage. Both effects demonstrate the continuing impact of the locality on individual vote preferences in Germany." (author's abstract)</span>*/}
+                                            {/*<span>{doc['_source']['abstract'].replace(doc['_source']['abstract'].slice(10, 50), `<b>${doc['_source']['abstract'].slice(10, 50)}</b>`)}</span>*/}
+                                            {/*`<b>${boldText}</b>`*/}
 
+                                            {/*{*/}
+                                            {/*        // !this.state.toggled.includes(ind) && !this.props.detailedView?*/}
+                                            {/*        //     <span>{doc['_source']['abstract']}</span>*/}
+                                            {/*        // :*/}
+                                            {/*            <>*/}
+                                            {/*                /!*<span>{doc['_source']['abstract'].split(doc['_source']['abstract'].slice(250, 300))[0]}</span>*!/*/}
+                                            {/*                /!*<span><b id={'extreme_summary_' + ind}>{doc['_source']['abstract'].slice(250, 300)}</b></span>*!/*/}
+                                            {/*                /!*<span>{doc['_source']['abstract'].split(doc['_source']['abstract'].slice(250, 300))[1]}</span>*!/*/}
+                                            {/*                */}
+                                            {/*                <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
+                                            {/*                <span><b id={'extreme_summary_' + ind}>{doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length)}</b></span>*/}
+                                            {/*                <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[1]}</span>*/}
+                                            {/*                <ReactTooltip*/}
+                                            {/*                    anchorId={'extreme_summary_' + ind}*/}
+                                            {/*                    // anchorSelect=".extreme_summary_bold"*/}
+                                            {/*                    place="top"*/}
+                                            {/*                    className="tooltip-clr z-pos"*/}
+                                            {/*                    content="Extractive Summary"*/}
+                                            {/*                />*/}
+                                            {/*            </>*/}
+                                            {/*}*/}
+
+                                            {/*{*/}
+                                            {/*    'extractive_summary' in doc['vadis_data'] && !this.state.toggled.includes(ind) && !this.props.detailedView?*/}
+                                            {/*        // console.log(doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length))*/}
+                                            {/*        <span>*/}
+                                            {/*        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
+                                            {/*        <span><b id={'extractive_summary_' + ind}>{doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length)}</b></span>*/}
+                                            {/*        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[1]}</span>*/}
+                                            {/*        <ReactTooltip*/}
+                                            {/*            anchorId={'extractive_summary_' + ind}*/}
+                                            {/*            // anchorSelect=".extreme_summary_bold"*/}
+                                            {/*            place="bottom"*/}
+                                            {/*            className="tooltip-clr z-pos"*/}
+                                            {/*            content="Extractive summary"*/}
+                                            {/*        />*/}
+                                            {/*        </span>*/}
+                                            {/*        :*/}
+                                            {/*        <span>{doc['_source']['abstract']}</span>*/}
+                                            {/*}*/}
+
+                                            <Highlighter
+                                                id={'extractive_summary_' + ind}
+                                                highlightClassName="extractive_summary_bold"
+                                                // searchWords={['']}
+                                                searchWords={[doc['_source']['vadis_data']['ext_summary']]}
+                                                autoEscape={true}
+                                                textToHighlight={doc['_source']['abstract']}
+                                            />
+                                            {/*<ReactTooltip*/}
+                                            {/*    anchorId={'extreme_summary_' + ind}*/}
+                                            {/*    anchorSelect=".extreme_summary_bold"*/}
+                                            {/*    place="top"*/}
+                                            {/*    className="tooltip-clr z-pos"*/}
+                                            {/*    content="Extreme Summary"*/}
+                                            {/*/>*/}
+                                            {/*<span>{doc['_source']['abstract']}</span>*/}
+                                            {/*<p><small> - Note: <b>Emphasized text </b>above indicates Extreme Summary from author's abstract.</small></p>*/}
+                                        </ShowMoreText>
+                                        <br/>
+                                    </div>
+                                    <ReactTooltip anchorId={'abstract' + ind}
+                                                  place="top"
+                                        // variant="light"
+                                                  className="tooltip-clr"
+                                        // float={true}
+                                                  content="Author's abstract"/>
+                                </>
+                                : null
+                        }
+                        <b className="col-md-6 bg-color pdg">Data 1: </b>
+                        <b className="col-md-6 bg-color pdg">Data 2: </b>
                         {'vadis_data' in doc['_source'] ?
                             <>
+                                {/*<b className="col-md-6 bg-color pdg">Data 1: </b>*/}
                                 {
                                     'abs_summary' in doc['_source']['vadis_data'] ?
-                                        <div key={'summary' + ind} className='col-12 small-txt align-txt'>
+                                        <div key={'summary' + ind} className='col-4 small-txt align-txt'>
                                             <span id={'summary' + ind}>{doc['_source']['vadis_data']['abs_summary']}</span>
                                             <ReactTooltip anchorId={'summary' + ind}
                                                           place="top"
@@ -133,135 +252,51 @@ class Table extends Component {
                                 }
                             </> : null
                         }
-                            <div key={'authors' + ind} className='col-10 small-txt bg-color'>
-                                {'authors' in doc['_source'] ? doc['_source']['authors'].map((author, i) => (
-                                    <>
-                                        <span id={'author' + i + ind} className="fw-normal" key={i}>
-                                            &#x2022; {'name' in author ? author['name'] : author['name_string']}&nbsp;
-                                        </span>
-                                        <ReactTooltip anchorId={'author' + i + ind}
-                                                      place="top"
-                                                      // variant="light"
-                                                      className="tooltip-clr"
-                                                      // float={true}
-                                                      content="Author"/>
-                                    </>
-                                )) : null}
-                            </div>
                         {
                             'variable_sentences' in doc['_source']['vadis_data'] ?
-                                <div key={'var_sents' + ind} className='col-2 text-end pdg'>
+                                <div key={'var_sents' + ind} className='col-2 text-end pdg col-with-border'>
                                         <span id={'sentences' + ind} className='my-badge small-txt'>
-                                            Total Sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}
+                                            Total sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}
                                         </span>
                                     <ReactTooltip anchorId={'sentences' + ind}
                                                   place="top"
-                                                  // variant="light"
+                                        // variant="light"
                                                   className="tooltip-clr"
-                                                  // float={true}
+                                        // float={true}
                                                   content="Total amount of extracted sentences with linked variables"/>
                                 </div> : null
                         }
-                        {
-                            'source_info' in doc['_source'] && 'src_journal' in doc['_source']['source_info'] ?
-                            <div key={'source_info' + ind} className='col-12 small-txt bg-color'>
-                                <span className="fw-normal" key='src_journal'>
-                                    <i id={'source_info' + ind}> {doc['_source']['source_info']['src_journal']} </i>
-                                    <ReactTooltip anchorId={'source_info' + ind}
-                                                  place="top"
-                                                  // variant="light"
-                                                  className="tooltip-clr"
-                                                  // float={true}
-                                                  content="Source"/>
-                                </span>
-                            </div> : null
+                        {'vadis_data_2' in doc['_source'] ?
+                            <>
+                                {/*<b className="row bg-color pdg">Data 2: </b>*/}
+                                {
+                                    'abs_summary' in doc['_source']['vadis_data_2'] ?
+                                        <div key={'summary2' + ind} className='col-4 small-txt align-txt'>
+                                            <span id={'summary2' + ind}>{doc['_source']['vadis_data_2']['abs_summary']}</span>
+                                            <ReactTooltip anchorId={'summary2' + ind}
+                                                          place="top"
+                                                          // variant="light"
+                                                          className="tooltip-clr"
+                                                          // float={true}
+                                                          content="Automatically generated summary of the article"/>
+                                        </div>
+                                        : null
+                                }
+                            </> : null
                         }
                         {
-                            'abstract' in doc['_source'] && doc['_source']['abstract'] ?
-                            <>
-                                <div id={'abstract' + ind} className='col-12 small-txt align-txt'>
-                                    <ShowMoreText width={0}
-                                                  lines={this.props.detailedView ? 0 : 1}
-                                                  anchorClass='show-more-less-clickable bg-color'
-                                                  more="Show more"
-                                                  less="Show less"
-                                                  className="content-css"
-                                                  expanded={false}
-                                                  truncatedEndingComponent={"... "}
-                                                  // onClick={()=>this.toggleMoreLess(ind)}
-                                    >
-                                        {/*<span>This pape<b>r addresses the 'old' topic of contextua</b>l effects on voting behaviour. Current multilevel analysis techniques provide a powerful tool to (re-)examine such regional influences on individual voting decisions. We apply multilevel analysis to German electoral data. Our results prove evidence of two contextual effects. The unemployment level of the district has a positive effect on SPD support, which confirms the local equivalent of the economic vote model. Furthermore the global strength of a party in a district has a positive effect on the individual decision to support that party. This is a confirmation of what has been labelled as breakage. Both effects demonstrate the continuing impact of the locality on individual vote preferences in Germany." (author's abstract)</span>*/}
-                                        {/*<span>{doc['_source']['abstract'].replace(doc['_source']['abstract'].slice(10, 50), `<b>${doc['_source']['abstract'].slice(10, 50)}</b>`)}</span>*/}
-                                        {/*`<b>${boldText}</b>`*/}
-
-                                        {/*{*/}
-                                        {/*        // !this.state.toggled.includes(ind) && !this.props.detailedView?*/}
-                                        {/*        //     <span>{doc['_source']['abstract']}</span>*/}
-                                        {/*        // :*/}
-                                        {/*            <>*/}
-                                        {/*                /!*<span>{doc['_source']['abstract'].split(doc['_source']['abstract'].slice(250, 300))[0]}</span>*!/*/}
-                                        {/*                /!*<span><b id={'extreme_summary_' + ind}>{doc['_source']['abstract'].slice(250, 300)}</b></span>*!/*/}
-                                        {/*                /!*<span>{doc['_source']['abstract'].split(doc['_source']['abstract'].slice(250, 300))[1]}</span>*!/*/}
-                                        {/*                */}
-                                        {/*                <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
-                                        {/*                <span><b id={'extreme_summary_' + ind}>{doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length)}</b></span>*/}
-                                        {/*                <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[1]}</span>*/}
-                                        {/*                <ReactTooltip*/}
-                                        {/*                    anchorId={'extreme_summary_' + ind}*/}
-                                        {/*                    // anchorSelect=".extreme_summary_bold"*/}
-                                        {/*                    place="top"*/}
-                                        {/*                    className="tooltip-clr z-pos"*/}
-                                        {/*                    content="Extractive Summary"*/}
-                                        {/*                />*/}
-                                        {/*            </>*/}
-                                        {/*}*/}
-
-                                                        {/*{*/}
-                                                        {/*    'extractive_summary' in doc['vadis_data'] && !this.state.toggled.includes(ind) && !this.props.detailedView?*/}
-                                                        {/*        // console.log(doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length))*/}
-                                                        {/*        <span>*/}
-                                                        {/*        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[0]}</span>*/}
-                                                        {/*        <span><b id={'extractive_summary_' + ind}>{doc['_source']['abstract'].slice(doc['_source']['abstract'].indexOf(doc['vadis_data']['extractive_summary']), doc['vadis_data']['extractive_summary'].length)}</b></span>*/}
-                                                        {/*        <span>{doc['_source']['abstract'].split(doc['vadis_data']['extractive_summary'])[1]}</span>*/}
-                                                        {/*        <ReactTooltip*/}
-                                                        {/*            anchorId={'extractive_summary_' + ind}*/}
-                                                        {/*            // anchorSelect=".extreme_summary_bold"*/}
-                                                        {/*            place="bottom"*/}
-                                                        {/*            className="tooltip-clr z-pos"*/}
-                                                        {/*            content="Extractive summary"*/}
-                                                        {/*        />*/}
-                                                        {/*        </span>*/}
-                                                        {/*        :*/}
-                                                        {/*        <span>{doc['_source']['abstract']}</span>*/}
-                                                        {/*}*/}
-
-                                            <Highlighter
-                                                id={'extractive_summary_' + ind}
-                                                highlightClassName="extractive_summary_bold"
-                                                // searchWords={['']}
-                                                searchWords={[doc['_source']['vadis_data']['ext_summary']]}
-                                                autoEscape={true}
-                                                textToHighlight={doc['_source']['abstract']}
-                                            />
-                                        {/*<ReactTooltip*/}
-                                        {/*    anchorId={'extreme_summary_' + ind}*/}
-                                        {/*    anchorSelect=".extreme_summary_bold"*/}
-                                        {/*    place="top"*/}
-                                        {/*    className="tooltip-clr z-pos"*/}
-                                        {/*    content="Extreme Summary"*/}
-                                        {/*/>*/}
-                                        {/*<span>{doc['_source']['abstract']}</span>*/}
-                                        {/*<p><small> - Note: <b>Emphasized text </b>above indicates Extreme Summary from author's abstract.</small></p>*/}
-                                    </ShowMoreText>
-                                </div>
-                                <ReactTooltip anchorId={'abstract' + ind}
-                                              place="top"
-                                              // variant="light"
-                                              className="tooltip-clr"
-                                              // float={true}
-                                              content="Author's abstract"/>
-                            </>
-                            : null
+                            'variable_sentences' in doc['_source']['vadis_data_2'] ?
+                                <div key={'var_sents2' + ind} className='col-2 text-end pdg'>
+                                        <span id={'sentences2' + ind} className='my-badge small-txt'>
+                                            Total sentences: {Object.keys(doc['_source']['vadis_data_2']['variable_sentences']).length}
+                                        </span>
+                                    <ReactTooltip anchorId={'sentences2' + ind}
+                                                  place="top"
+                                        // variant="light"
+                                                  className="tooltip-clr"
+                                        // float={true}
+                                                  content="Total amount of extracted sentences with linked variables"/>
+                                </div> : null
                         }
                         {
                             this.props.detailedView ?
@@ -271,8 +306,21 @@ class Table extends Component {
                                             {/*<span className="sr-only">Loading...</span>*/}
                                         </div>
                                     </div>
-                                    : 'vadis_data' in doc['_source'] && !('error' in doc['_source']['vadis_data']) ?
-                                        <Accordions key={'Accordions' + ind} result={doc['_source']['vadis_data']} pdfId={doc['_id'].split('-')[2]}/>
+                                    : 'vadis_data' in doc['_source'] && 'vadis_data_2' in doc['_source'] ?
+                                    // : 'vadis_data' in doc['_source'] && !('error' in doc['_source']['vadis_data']) ?
+                                            <div className="container">
+                                                <br/>
+                                                <div className="row">
+                                                    <div className="col-md-6">
+                                                        {/*<b className="bg-color pdg">Data 1: </b>*/}
+                                                        <Accordions key={'Accordions_' + ind} result={doc['_source']['vadis_data']} pdfId={doc['_id'].split('-')[2]}/>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        {/*<b className="bg-color pdg">Data 2: </b>*/}
+                                                        <Accordions key={'Accordions2_' + ind} result={doc['_source']['vadis_data_2']} pdfId={doc['_id'].split('-')[2]}/>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         : <div key={'dv'} className='d-flex justify-content-center'>
                                             <span className='orange-color'>
                                                 Something Went Wrong!

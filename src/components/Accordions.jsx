@@ -51,7 +51,7 @@ class Accordions extends Component {
         let sentences_within_range_c = []
         let rv= []
         Object.entries(this.props.result).map((res, res_ind) => {
-            if (!res[0].includes('summary')) {
+            if (res[0].includes('variable_sentences')) {
                 rv.push([0.75, 1.0])
                 let c = 0
                 Object.entries(this.props.result[res[0]]).forEach((k, i) => {
@@ -59,12 +59,12 @@ class Accordions extends Component {
                         c += 1
                     }
                 })
-                sentences_within_range_c.push(c)
+                return sentences_within_range_c.push(c)
             }
             else{
                 // pushing 0's if key==='summary' to keep the list index in an order
                 rv.push([0,0])
-                sentences_within_range_c.push(0)
+                return sentences_within_range_c.push(0)
             }
         })
         this.setState({
@@ -84,21 +84,21 @@ class Accordions extends Component {
         return (
             range_values.length !== 0 ?
                 Object.entries(this.props.result).map((key_val, key_val_ind) => (
-                    Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
+                    key_val[0] === 'variable_sentences' && Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
                         <Accordion key={key_val_ind} className='row' allowMultipleExpanded allowZeroExpanded
                                    preExpanded={[key_val_ind]}>
                             <AccordionItem key={key_val_ind} className='col-lg-12 accord-margin' uuid={key_val_ind}>
-                                <br/>
+                                {/*<br/>*/}
                                 <AccordionItemHeading>
                                     <AccordionItemButton className='accordion__button'>
                                         <>
                                             <span
-                                                id={key_val[0]}>{key_val[0].includes('variable_sentences') ? 'Variable Sentences' : key_val[0]}
+                                                id={key_val[0]}>{key_val[0].includes('variable_sentences') ? 'Variable Sentences' : key_val[0].includes('abstract_sentences') ? 'Abstract Sentences' : key_val[0]}
                                             </span>
                                             <ReactTooltip anchorId={key_val[0]}
                                                           place="top"
                                                           className="tooltip-clr"
-                                                          content="Automatically selected sentences from the publication, which mention variables"
+                                                          content={key_val[0].includes('variable_sentences') ? "Automatically selected sentences from the publication, which mention variables." : key_val[0].includes('abstract_sentences') ? "Automatically selected sentences from the publication to form abstract." : key_val[0]}
                                             />
                                             <b id='variable-sentences-count'> ({sentences_within_range_count[key_val_ind]}) </b>
                                             <ReactTooltip
@@ -128,9 +128,10 @@ class Accordions extends Component {
                                 {/*<br/>*/}
                                 <AccordionItemPanel className='panel-bg-clr'>
                                     {
-                                        key_val[1].map((var_sent, var_sent_ind) => (
-                                            typeof var_sent === 'object' && Object.keys(var_sent).length !== 0 ?
-                                                <Accordion key={String(key_val_ind) + String(var_sent_ind)}
+                                        key_val[0] === 'variable_sentences'?
+                                            key_val[1].map((var_sent, var_sent_ind) => (
+                                                typeof var_sent === 'object' && Object.keys(var_sent).length !== 0 ?
+                                                    <Accordion key={String(key_val_ind) + String(var_sent_ind)}
                                                            className='row r-margin' allowMultipleExpanded
                                                            allowZeroExpanded>
                                                     {
@@ -241,7 +242,7 @@ class Accordions extends Component {
                                                                                     <>
                                                                                         <b id={'similar_vars' + String(var_sent_ind)}
                                                                                            className='orange-clr inline-div'>
-                                                                                            {'similar variables' + ': '}
+                                                                                            {'similar variables: '}
                                                                                         </b>
                                                                                         <ShowMoreText lines={1}
                                                                                                       more={<span className='orange-clr'>Show More</span>}
@@ -283,6 +284,7 @@ class Accordions extends Component {
                                                 :
                                                 null
                                         ))
+                                        : null
                                     }
                                 </AccordionItemPanel>
                                 <div className="d-flex justify-content-center">
