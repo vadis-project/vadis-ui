@@ -14,6 +14,7 @@ class Table extends Component {
             input: null,
             button_id: null,
             toggled: [],
+            data_keys: ['vadis_data', 'vadis_data_2']
         };
         this.handleClick = this.handleClick.bind(this)
         this.toggleMoreLess = this.toggleMoreLess.bind(this)
@@ -306,26 +307,41 @@ class Table extends Component {
                                             {/*<span className="sr-only">Loading...</span>*/}
                                         </div>
                                     </div>
-                                    : 'vadis_data' in doc['_source'] && 'vadis_data_2' in doc['_source'] ?
+                                    :
+                                    // 'vadis_data' in doc['_source'] || 'vadis_data_2' in doc['_source'] ?
                                     // : 'vadis_data' in doc['_source'] && !('error' in doc['_source']['vadis_data']) ?
                                             <div className="container">
                                                 <br/>
                                                 <div className="row">
-                                                    <div className="col-md-6">
-                                                        {/*<b className="bg-color pdg">Data 1: </b>*/}
-                                                        <Accordions key={'Accordions_' + ind} result={doc['_source']['vadis_data']} pdfId={doc['_id'].split('-')[2]}/>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        {/*<b className="bg-color pdg">Data 2: </b>*/}
-                                                        <Accordions key={'Accordions2_' + ind} result={doc['_source']['vadis_data_2']} pdfId={doc['_id'].split('-')[2]}/>
-                                                    </div>
+                                                    {
+                                                        this.state.data_keys.map((d_key, d_ind) => (
+                                                            // console.log(d_key)
+                                                            // col-with-border
+                                                            d_key in doc['_source']?
+                                                                <div className="col-md-6">
+                                                                    <Accordions key={d_key} result={doc['_source'][d_key]} pdfId={doc['_id'].split('-')[2]} data_key={d_key}/>
+                                                                </div>
+                                                                :
+                                                                <div className="col-md-6">
+                                                                    <span className='orange-color'>
+                                                                        No available data for {d_key}!!!
+                                                                    </span>
+                                                                </div>
+                                                        // <div className="col-md-6">
+                                                        // <Accordions key={'Accordions_' + ind} result={doc['_source']['vadis_data']} pdfId={doc['_id'].split('-')[2]} data='data1'/>
+                                                        // </div>
+                                                        // <div className="col-md-6">
+                                                        // <Accordions key={'Accordions2_' + ind} result={doc['_source']['vadis_data_2']} pdfId={doc['_id'].split('-')[2]} data='data2'/>
+                                                        // </div>
+                                                        ))
+                                                    }
                                                 </div>
                                             </div>
-                                        : <div key={'dv'} className='d-flex justify-content-center'>
-                                            <span className='orange-color'>
-                                                Something Went Wrong!
-                                            </span>
-                                        </div>
+                                        // : <div key={'dv'} className='d-flex justify-content-center'>
+                                        //     <span className='orange-color'>
+                                        //         Something Went Wrong!
+                                        //     </span>
+                                        // </div>
                                 : null
                         }
                         &nbsp;

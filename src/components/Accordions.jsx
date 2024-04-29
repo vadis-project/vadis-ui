@@ -84,44 +84,44 @@ class Accordions extends Component {
         return (
             range_values.length !== 0 ?
                 Object.entries(this.props.result).map((key_val, key_val_ind) => (
-                    key_val[0] === 'variable_sentences' && Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
-                        <Accordion key={key_val_ind} className='row' allowMultipleExpanded allowZeroExpanded
-                                   preExpanded={[key_val_ind]}>
+                    // key_val[0] === 'variable_sentences' &&
+                    Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
+                        <Accordion key={key_val_ind} className='row' allowMultipleExpanded allowZeroExpanded preExpanded={[key_val_ind]}>
                             <AccordionItem key={key_val_ind} className='col-lg-12 accord-margin' uuid={key_val_ind}>
                                 {/*<br/>*/}
                                 <AccordionItemHeading>
                                     <AccordionItemButton className='accordion__button'>
                                         <>
                                             <span
-                                                id={key_val[0]}>{key_val[0].includes('variable_sentences') ? 'Variable Sentences' : key_val[0].includes('abstract_sentences') ? 'Abstract Sentences' : key_val[0]}
+                                                id={key_val[0] + this.props.data_key}>{key_val[0].includes('variable_sentences') ? 'Variable Sentences' : key_val[0].includes('abstract_sentences') ? 'Abstract Sentences' : key_val[0]}
                                             </span>
-                                            <ReactTooltip anchorId={key_val[0]}
+                                            <ReactTooltip anchorId={key_val[0] + this.props.data_key}
                                                           place="top"
                                                           className="tooltip-clr"
-                                                          content={key_val[0].includes('variable_sentences') ? "Automatically selected sentences from the publication, which mention variables." : key_val[0].includes('abstract_sentences') ? "Automatically selected sentences from the publication to form abstract." : key_val[0]}
+                                                          content={key_val[0].includes('variable_sentences') ? "Automatically selected sentences from the publication, which mention variables." : key_val[0].includes('abstract_sentences') ? "Automatically selected abstract sentences from the publication" : key_val[0]}
                                             />
-                                            <b id='variable-sentences-count'> ({sentences_within_range_count[key_val_ind]}) </b>
+                                            <b id={key_val[0] === 'variable_sentences'? 'var-sentences-count'  + this.props.data_key : 'abs-sentences-count' + this.props.data_key}> ({key_val[0] === 'variable_sentences'? sentences_within_range_count[key_val_ind] : key_val[1].length}) </b>
                                             <ReactTooltip
-                                                anchorId='variable-sentences-count'
+                                                anchorId={key_val[0] === 'variable_sentences'? 'var-sentences-count' + this.props.data_key : 'abs-sentences-count' + this.props.data_key}
                                                 place="top"
                                                 className="tooltip-clr"
-                                                content="Amount of extracted sentences containing linked variables with high precision"/>
-                                            <div className="form-check form-switch switch-btn"
-                                                 onClick={event => event.stopPropagation()}>
+                                                content={key_val[0] === 'variable_sentences'? "Amount of extracted sentences containing linked variables with high precision" : "Amount of selected abstract sentences"} />
+                                            {key_val[0] === 'variable_sentences'? <div className="form-check form-switch switch-btn"
+                                                  onClick={event => event.stopPropagation()}>
                                                 <input className="form-check-input" type="checkbox" role="switch"
                                                        id="flexSwitchCheckChecked"
                                                        onChange={() => this.toggleHighlighting()}/>
-                                                <label className="form-check-label" id='highlight-tooltip'
+                                                <label className="form-check-label" id={'highlight-tooltip' + this.props.data_key}
                                                        htmlFor="flexSwitchCheckChecked">
                                                     Common words highlighting
                                                     {/*{!this.state.highlightFlag?'Toggle to highlight common words':'Toggle to unhighlight common words'}*/}
                                                 </label>
                                                 <ReactTooltip
-                                                    anchorId='highlight-tooltip'
+                                                    anchorId={'highlight-tooltip' + this.props.data_key}
                                                     place="top"
                                                     className="tooltip-clr"
                                                     content="Toggle to (un)highlight the common words"/>
-                                            </div>
+                                            </div> : null}
                                         </>
                                     </AccordionItemButton>
                                 </AccordionItemHeading>
@@ -136,9 +136,7 @@ class Accordions extends Component {
                                                            allowZeroExpanded>
                                                     {
                                                         'score' in var_sent && Number(var_sent['score']) >= range_values[key_val_ind][0] && Number(var_sent['score']) <= range_values[key_val_ind][1] ?
-                                                            <AccordionItem
-                                                                key={String(key_val_ind) + String(var_sent_ind)}
-                                                                className='col-12'>
+                                                            <AccordionItem key={String(key_val_ind) + String(var_sent_ind)} className='col-12'>
                                                                 <AccordionItemHeading>
                                                                     <AccordionItemButton
                                                                         className={var_sent_ind % 2 !== 0 ? 'accordion__button' : 'accordion__button accordion-item-clr'}>
@@ -158,13 +156,13 @@ class Accordions extends Component {
                                                                             'score' in var_sent ?
                                                                                 <>
                                                                                     &nbsp;&nbsp;<span>
-                                                                                (<i id={"var_score" + String(key_val_ind) + String(var_sent_ind)}
+                                                                                (<i id={"var_score" + String(key_val_ind) + String(var_sent_ind) + this.props.data_key}
                                                                                     className='orange-clr'>
                                                                                     score:
                                                                                 </i> {var_sent['score']})
                                                                             </span>
                                                                                     <ReactTooltip
-                                                                                        anchorId={"var_score" + String(key_val_ind) + String(var_sent_ind)}
+                                                                                        anchorId={"var_score" + String(key_val_ind) + String(var_sent_ind) + this.props.data_key}
                                                                                         place="top"
                                                                                         // variant="info"
                                                                                         className="tooltip-clr"
@@ -174,7 +172,7 @@ class Accordions extends Component {
                                                                                 : null
                                                                         }
                                                                         <span className='copy-icon'
-                                                                              id={String(key_val_ind) + String(var_sent_ind)}
+                                                                              id={String(key_val_ind) + String(var_sent_ind) + this.props.data_key}
                                                                               onClick={async () => {
                                                                                   await navigator.clipboard.writeText(var_sent['sentence'].toString());
                                                                                   window.open('https://demo-vadis.gesis.org:443/_pdf/' + this.props.pdfId + '.pdf#search="' + var_sent['sentence'] + '"', '_blank');
@@ -184,7 +182,7 @@ class Accordions extends Component {
                                                                         >
                                                                         <Icon iconName='CopyAndOpenPdf'/>
                                                                         <ReactTooltip
-                                                                            anchorId={String(key_val_ind) + String(var_sent_ind)}
+                                                                            anchorId={String(key_val_ind) + String(var_sent_ind) + this.props.data_key}
                                                                             place="top"
                                                                             // variant="info"
                                                                             className="sentence-tooltip-style tooltip-clr"
@@ -203,17 +201,12 @@ class Accordions extends Component {
                                                                 </span>
                                                                     </AccordionItemButton>
                                                                 </AccordionItemHeading>
-                                                                <AccordionItemPanel
-                                                                    className='panel-bg-clr accord-margin'>
-                                                                    <Accordion
-                                                                        key={'content' + String(key_val_ind) + String(var_sent_ind)}
-                                                                        className='row r-margin'>
+                                                                <AccordionItemPanel className='panel-bg-clr accord-margin'>
+                                                                    <Accordion key={'content' + String(key_val_ind) + String(var_sent_ind)} className='row r-margin'>
                                                                         {
                                                                             'variables' in var_sent && var_sent['variables'].length !== 0 ?
                                                                                 var_sent['variables'].map((var_content, var_content_ind) =>
-                                                                                    <AccordionItem
-                                                                                        key={String(key_val_ind) + String(var_sent_ind) + String(var_content_ind)}
-                                                                                        className='col-12 accord-margin'>
+                                                                                    <AccordionItem key={String(key_val_ind) + String(var_sent_ind) + String(var_content_ind)} className='col-12 accord-margin'>
                                                                                         {
                                                                                             <>
                                                                                                 <span>
@@ -240,7 +233,7 @@ class Accordions extends Component {
                                                                             'similar_variables' in var_sent && var_sent['similar_variables'].length !== 0 ?
                                                                                 <AccordionItem>
                                                                                     <>
-                                                                                        <b id={'similar_vars' + String(var_sent_ind)}
+                                                                                        <b id={'similar_vars' + String(var_sent_ind) + this.props.data_key}
                                                                                            className='orange-clr inline-div'>
                                                                                             {'similar variables: '}
                                                                                         </b>
@@ -265,7 +258,7 @@ class Accordions extends Component {
                                                                                             })}
                                                                                         </ShowMoreText>
                                                                                         <ReactTooltip
-                                                                                            anchorId={'similar_vars' + String(var_sent_ind)}
+                                                                                            anchorId={'similar_vars' + String(var_sent_ind) + this.props.data_key}
                                                                                             place="top"
                                                                                             className="tooltip-clr"
                                                                                             content="Additional related variables"/>
@@ -284,19 +277,51 @@ class Accordions extends Component {
                                                 :
                                                 null
                                         ))
-                                        : null
+                                        : key_val[0] === 'abstract_sentences'?
+                                                key_val[1].map((abs_sent, abs_sent_ind) => (
+                                                    typeof abs_sent === 'object' && Object.keys(abs_sent).length !== 0 ?
+                                                        <Accordion key={String(key_val_ind) + String(abs_sent_ind)}
+                                                                   className='row r-margin' allowMultipleExpanded
+                                                                   allowZeroExpanded>
+                                                            <AccordionItem key={String(key_val_ind) + String(abs_sent_ind)} className='col-12'>
+                                                                <AccordionItemHeading>
+                                                                    <AccordionItemButton className={abs_sent_ind % 2 !== 0 ? 'accordion__button' : 'accordion__button accordion-item-clr'}>
+                                                                        {abs_sent['sentence']}
+                                                                    </AccordionItemButton>
+                                                                </AccordionItemHeading>
+                                                            {/*</AccordionItem>*/}
+                                                                <AccordionItemPanel className='panel-bg-clr accord-margin'>
+                                                                    {/*<Accordion key={'content' + String(key_val_ind) + String(abs_sent_ind)} className='row r-margin'>*/}
+                                                                    {/*    <AccordionItem key={String(key_val_ind) + String(abs_sent_ind)} className='col-12 accord-margin'>*/}
+                                                                            <span>
+                                                                                <b className='bg-color'>Sentence ID: </b>{abs_sent['sentence_id']}
+                                                                                <br/>
+                                                                                <b className='bg-color'>Position: </b>{abs_sent['position']}
+                                                                            </span>
+                                                                        {/*</AccordionItem>*/}
+                                                                    {/*</Accordion>*/}
+                                                                </AccordionItemPanel>
+                                                            </AccordionItem>
+                                                        </Accordion>
+                                                        : null
+                                                ))
+                                            : null
                                     }
                                 </AccordionItemPanel>
-                                <div className="d-flex justify-content-center">
-                                    <button type="button" className="btn btn-link bg-color"
-                                            disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[key_val_ind] === key_val[1].length}
-                                            onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0]-0.25).toFixed(1)), 1.0], key_val[0], key_val_ind) : null}> Show more sentences
-                                    </button>
-                                </div>
+                                {
+                                    key_val[0] === 'variable_sentences'?
+                                        <div className="d-flex justify-content-center">
+                                            <button type="button" className="btn btn-link bg-color"
+                                                    disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[key_val_ind] === key_val[1].length}
+                                                    onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0] - 0.25).toFixed(1)), 1.0], key_val[0], key_val_ind) : null}>
+                                                Show more sentences
+                                            </button>
+                                        </div>
+                                    : null
+                                }
                             </AccordionItem>
                         </Accordion>
-                        :
-                        null
+                        : null
                 ))
                 : null
         );
