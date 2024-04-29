@@ -324,7 +324,7 @@ class Table extends Component {
                                                                 :
                                                                 <div className="col-md-6">
                                                                     <span className='orange-color'>
-                                                                        No available data for {d_key}!!!
+                                                                        No data available for {d_key}!!!
                                                                     </span>
                                                                 </div>
                                                         // <div className="col-md-6">
