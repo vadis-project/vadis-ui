@@ -52,7 +52,8 @@ class Accordions extends Component {
         let rv= []
         Object.entries(this.props.result).map((res, res_ind) => {
             if (res[0].includes('variable_sentences')) {
-                rv.push([0.75, 1.0])
+                rv.push(this.props.sents_range_score)
+                // rv.push([0.75, 1.0])
                 let c = 0
                 Object.entries(this.props.result[res[0]]).forEach((k, i) => {
                     if (Number(k[1]['score']) >= rv[res_ind][0] && Number(k[1]['score']) <= rv[res_ind][1]) {
@@ -85,7 +86,7 @@ class Accordions extends Component {
             range_values.length !== 0 ?
                 Object.entries(this.props.result).map((key_val, key_val_ind) => (
                     // key_val[0] === 'variable_sentences' &&
-                    Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
+                    !key_val[0].includes('abstract_sentences') && Array.isArray(key_val[1]) && key_val[1].length !== 0 ?
                         <Accordion key={key_val_ind} className='row' allowMultipleExpanded allowZeroExpanded preExpanded={[key_val_ind]}>
                             <AccordionItem key={key_val_ind} className='col-lg-12 accord-margin' uuid={key_val_ind}>
                                 {/*<br/>*/}
@@ -277,39 +278,34 @@ class Accordions extends Component {
                                                 :
                                                 null
                                         ))
-                                        : key_val[0] === 'abstract_sentences'?
-                                                key_val[1].map((abs_sent, abs_sent_ind) => (
-                                                    typeof abs_sent === 'object' && Object.keys(abs_sent).length !== 0 ?
-                                                        <Accordion key={String(key_val_ind) + String(abs_sent_ind)}
-                                                                   className='row r-margin' allowMultipleExpanded
-                                                                   allowZeroExpanded>
-                                                            <AccordionItem key={String(key_val_ind) + String(abs_sent_ind)} className='col-12'>
-                                                                <AccordionItemHeading>
-                                                                    <AccordionItemButton className={abs_sent_ind % 2 !== 0 ? 'accordion__button' : 'accordion__button accordion-item-clr'}>
-                                                                        {abs_sent['sentence']}
-                                                                    </AccordionItemButton>
-                                                                </AccordionItemHeading>
-                                                            {/*</AccordionItem>*/}
-                                                                <AccordionItemPanel className='panel-bg-clr accord-margin'>
-                                                                    {/*<Accordion key={'content' + String(key_val_ind) + String(abs_sent_ind)} className='row r-margin'>*/}
-                                                                    {/*    <AccordionItem key={String(key_val_ind) + String(abs_sent_ind)} className='col-12 accord-margin'>*/}
-                                                                            <span>
-                                                                                <b className='bg-color'>Sentence ID: </b>{abs_sent['sentence_id']}
-                                                                                <br/>
-                                                                                <b className='bg-color'>Position: </b>{abs_sent['position']}
-                                                                            </span>
-                                                                        {/*</AccordionItem>*/}
-                                                                    {/*</Accordion>*/}
-                                                                </AccordionItemPanel>
-                                                            </AccordionItem>
-                                                        </Accordion>
-                                                        : null
-                                                ))
+                                        // : key_val[0] === 'abstract_sentences'?
+                                        //         key_val[1].map((abs_sent, abs_sent_ind) => (
+                                        //             typeof abs_sent === 'object' && Object.keys(abs_sent).length !== 0 ?
+                                        //                 <Accordion key={String(key_val_ind) + String(abs_sent_ind)}
+                                        //                            className='row r-margin' allowMultipleExpanded
+                                        //                            allowZeroExpanded>
+                                        //                     <AccordionItem key={String(key_val_ind) + String(abs_sent_ind)} className='col-12'>
+                                        //                         <AccordionItemHeading>
+                                        //                             <AccordionItemButton className={abs_sent_ind % 2 !== 0 ? 'accordion__button' : 'accordion__button accordion-item-clr'}>
+                                        //                                 {abs_sent['sentence']}
+                                        //                             </AccordionItemButton>
+                                        //                         </AccordionItemHeading>
+                                        //                         <AccordionItemPanel className='panel-bg-clr accord-margin'>
+                                        //                             <span>
+                                        //                                 <b className='bg-color'>Sentence ID: </b>{abs_sent['sentence_id']}
+                                        //                                 <br/>
+                                        //                                 <b className='bg-color'>Position: </b>{abs_sent['position']}
+                                        //                             </span>
+                                        //                         </AccordionItemPanel>
+                                        //                     </AccordionItem>
+                                        //                 </Accordion>
+                                        //                 : null
+                                        //         ))
                                             : null
                                     }
                                 </AccordionItemPanel>
                                 {
-                                    key_val[0] === 'variable_sentences'?
+                                    this.props.data_key ==="vadis_data" && key_val[0] === 'variable_sentences'?
                                         <div className="d-flex justify-content-center">
                                             <button type="button" className="btn btn-link bg-color"
                                                     disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[key_val_ind] === key_val[1].length}

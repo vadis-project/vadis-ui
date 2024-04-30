@@ -319,7 +319,7 @@ class Table extends Component {
                                                             // col-with-border
                                                             d_key in doc['_source']?
                                                                 <div className="col-md-6">
-                                                                    <Accordions key={d_key} result={doc['_source'][d_key]} pdfId={doc['_id'].split('-')[2]} data_key={d_key}/>
+                                                                    <Accordions key={d_key} result={doc['_source'][d_key]} pdfId={doc['_id'].split('-')[2]} data_key={d_key}  sents_range_score={d_key==="vadis_data"? [0.75, 1.0] : [0, 1.0]}/>
                                                                 </div>
                                                                 :
                                                                 <div className="col-md-6">
