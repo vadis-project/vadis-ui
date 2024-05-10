@@ -233,14 +233,12 @@ class Table extends Component {
                                 </>
                                 : null
                         }
-                        <b className="col-md-6 bg-color pdg">Data 1: </b>
-                        <b className="col-md-6 bg-color pdg">Data 2: </b>
                         {'vadis_data' in doc['_source'] ?
-                            <>
+                            <i>
                                 {/*<b className="col-md-6 bg-color pdg">Data 1: </b>*/}
                                 {
                                     'abs_summary' in doc['_source']['vadis_data'] ?
-                                        <div key={'summary' + ind} className='col-4 small-txt align-txt'>
+                                        <div key={'summary' + ind} className='col-12 small-txt align-txt'>
                                             <span id={'summary' + ind}>{doc['_source']['vadis_data']['abs_summary']}</span>
                                             <ReactTooltip anchorId={'summary' + ind}
                                                           place="top"
@@ -251,11 +249,13 @@ class Table extends Component {
                                         </div>
                                         : null
                                 }
-                            </> : null
+                                <br/>
+                            </i> : null
                         }
+                        <b className="col-md-3 bg-color text-end pdg">Version 1: </b>
                         {
                             'variable_sentences' in doc['_source']['vadis_data'] ?
-                                <div key={'var_sents' + ind} className='col-2 text-end pdg col-with-border'>
+                                <div key={'var_sents' + ind} className='col-3 pdg col-with-border'>
                                         <span id={'sentences' + ind} className='my-badge small-txt'>
                                             Total sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}
                                         </span>
@@ -267,27 +267,10 @@ class Table extends Component {
                                                   content="Total amount of extracted sentences with linked variables"/>
                                 </div> : null
                         }
-                        {'vadis_data_2' in doc['_source'] ?
-                            <>
-                                {/*<b className="row bg-color pdg">Data 2: </b>*/}
-                                {
-                                    'abs_summary' in doc['_source']['vadis_data_2'] ?
-                                        <div key={'summary2' + ind} className='col-4 small-txt align-txt'>
-                                            <span id={'summary2' + ind}>{doc['_source']['vadis_data_2']['abs_summary']}</span>
-                                            <ReactTooltip anchorId={'summary2' + ind}
-                                                          place="top"
-                                                          // variant="light"
-                                                          className="tooltip-clr"
-                                                          // float={true}
-                                                          content="Automatically generated summary of the article"/>
-                                        </div>
-                                        : null
-                                }
-                            </> : null
-                        }
+                        <b className="col-md-3 bg-color text-end pdg">Version 2: </b>
                         {
                             'variable_sentences' in doc['_source']['vadis_data_2'] ?
-                                <div key={'var_sents2' + ind} className='col-2 text-end pdg'>
+                                <div key={'var_sents2' + ind} className='col-3 pdg'>
                                         <span id={'sentences2' + ind} className='my-badge small-txt'>
                                             Total sentences: {Object.keys(doc['_source']['vadis_data_2']['variable_sentences']).length}
                                         </span>
@@ -344,7 +327,7 @@ class Table extends Component {
                                         // </div>
                                 : null
                         }
-                        &nbsp;
+                        {/*&nbsp;*/}
                     </td>
                 </tr>
                     // : null
