@@ -14,7 +14,8 @@ class Table extends Component {
             input: null,
             button_id: null,
             toggled: [],
-            data_keys: ['vadis_data', 'vadis_data_2']
+            data_keys: ['vadis_data_2']
+            // data_keys: ['vadis_data', 'vadis_data_2']
         };
         this.handleClick = this.handleClick.bind(this)
         this.toggleMoreLess = this.toggleMoreLess.bind(this)
@@ -234,11 +235,11 @@ class Table extends Component {
                                 : null
                         }
                         {'vadis_data' in doc['_source'] ?
-                            <i>
+                            <i className='col-10'>
                                 {/*<b className="col-md-6 bg-color pdg">Data 1: </b>*/}
                                 {
                                     'abs_summary' in doc['_source']['vadis_data'] ?
-                                        <div key={'summary' + ind} className='col-12 small-txt align-txt'>
+                                        <div key={'summary' + ind} className='small-txt align-txt'>
                                             <span id={'summary' + ind}>{doc['_source']['vadis_data']['abs_summary']}</span>
                                             <ReactTooltip anchorId={'summary' + ind}
                                                           place="top"
@@ -249,28 +250,12 @@ class Table extends Component {
                                         </div>
                                         : null
                                 }
-                                <br/>
+                                {/*<br/>*/}
                             </i> : null
                         }
-                        <b className="col-md-3 bg-color text-end pdg">Version 1: </b>
-                        {
-                            'variable_sentences' in doc['_source']['vadis_data'] ?
-                                <div key={'var_sents' + ind} className='col-3 pdg col-with-border'>
-                                        <span id={'sentences' + ind} className='my-badge small-txt'>
-                                            Total sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}
-                                        </span>
-                                    <ReactTooltip anchorId={'sentences' + ind}
-                                                  place="top"
-                                        // variant="light"
-                                                  className="tooltip-clr"
-                                        // float={true}
-                                                  content="Total amount of extracted sentences with linked variables"/>
-                                </div> : null
-                        }
-                        <b className="col-md-3 bg-color text-end pdg">Version 2: </b>
                         {
                             'variable_sentences' in doc['_source']['vadis_data_2'] ?
-                                <div key={'var_sents2' + ind} className='col-3 pdg'>
+                                <div key={'var_sents2' + ind} className='col-2 text-end'>
                                         <span id={'sentences2' + ind} className='my-badge small-txt'>
                                             Total sentences: {Object.keys(doc['_source']['vadis_data_2']['variable_sentences']).length}
                                         </span>
@@ -282,6 +267,37 @@ class Table extends Component {
                                                   content="Total amount of extracted sentences with linked variables"/>
                                 </div> : null
                         }
+
+                        {/*<b className="col-md-3 bg-color text-end pdg">Version 1: </b>*/}
+                        {/*{*/}
+                        {/*    'variable_sentences' in doc['_source']['vadis_data'] ?*/}
+                        {/*        <div key={'var_sents' + ind} className='col-3 pdg col-with-border'>*/}
+                        {/*                <span id={'sentences' + ind} className='my-badge small-txt'>*/}
+                        {/*                    Total sentences: {Object.keys(doc['_source']['vadis_data']['variable_sentences']).length}*/}
+                        {/*                </span>*/}
+                        {/*            <ReactTooltip anchorId={'sentences' + ind}*/}
+                        {/*                          place="top"*/}
+                        {/*                // variant="light"*/}
+                        {/*                          className="tooltip-clr"*/}
+                        {/*                // float={true}*/}
+                        {/*                          content="Total amount of extracted sentences with linked variables"/>*/}
+                        {/*        </div> : null*/}
+                        {/*}*/}
+                        {/*<b className="col-md-3 bg-color text-end pdg">Version 2: </b>*/}
+                        {/*{*/}
+                        {/*    'variable_sentences' in doc['_source']['vadis_data_2'] ?*/}
+                        {/*        <div key={'var_sents2' + ind} className='col-3 pdg'>*/}
+                        {/*                <span id={'sentences2' + ind} className='my-badge small-txt'>*/}
+                        {/*                    Total sentences: {Object.keys(doc['_source']['vadis_data_2']['variable_sentences']).length}*/}
+                        {/*                </span>*/}
+                        {/*            <ReactTooltip anchorId={'sentences2' + ind}*/}
+                        {/*                          place="top"*/}
+                        {/*                // variant="light"*/}
+                        {/*                          className="tooltip-clr"*/}
+                        {/*                // float={true}*/}
+                        {/*                          content="Total amount of extracted sentences with linked variables"/>*/}
+                        {/*        </div> : null*/}
+                        {/*}*/}
                         {
                             this.props.detailedView ?
                                 this.props.loading ?
@@ -301,7 +317,7 @@ class Table extends Component {
                                                             // console.log(d_key)
                                                             // col-with-border
                                                             d_key in doc['_source']?
-                                                                <div className="col-md-6">
+                                                                <div className="col-md-12">
                                                                     <Accordions key={d_key} result={doc['_source'][d_key]} pdfId={doc['_id'].split('-')[2]} data_key={d_key}  sents_range_score={d_key==="vadis_data"? [0.75, 1.0] : [0, 1.0]}/>
                                                                 </div>
                                                                 :

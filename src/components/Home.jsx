@@ -71,7 +71,7 @@ class Home extends Component {
                 "type": "number",
                 "script": {
                     // "source": "doc['my_text_field'].value.length()",
-                    "source": "params._source.vadis_data.variable_sentences.size()",
+                    "source": "params._source.vadis_data_2.variable_sentences.size()",
                     "lang": "painless"
                 },
                 "order": "asc"  // or "desc" for descending order
@@ -81,7 +81,7 @@ class Home extends Component {
                 "type": "number",
                 "script": {
                     // "source": "doc['my_text_field'].value.length()",
-                    "source": "params._source.vadis_data.variable_sentences.size()",
+                    "source": "params._source.vadis_data_2.variable_sentences.size()",
                     "lang": "painless"
                 },
                 "order": "desc"  // or "desc" for descending order
