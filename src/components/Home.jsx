@@ -100,17 +100,22 @@ class Home extends Component {
                 "query": {
                     "bool": {
                         "must": [  // "filter" instead of "must" doesn't give relevance score
-                                {
-                                    "multi_match": {
-                                        "query": q,
-                                        "type": "best_fields",
-                                        // "fields": ["title", "abstract", "fulltext"],
-                                        "fields": ["title^3", "abstract^2", "pdftotext_fulltext^1"],
-                                        "operator": "and"
-                                    }
-                                },
-                                langFilter
-                            ]
+                            {
+                                "multi_match": {
+                                    "query": q,
+                                    "type": "best_fields",
+                                    // "fields": ["title", "abstract", "fulltext"],
+                                    "fields": ["title^3", "abstract^2", "pdftotext_fulltext^1"],
+                                    "operator": "and"
+                                }
+                            },
+                            {
+                                "exists": {
+                                    "field": "vadis_data_2"
+                                }
+                            },
+                            langFilter
+                        ]
                     }
                 },
                 "sort": [
@@ -127,7 +132,14 @@ class Home extends Component {
                         // "query":{'match_all': {}},
                         "query": {
                             "bool": {
-                                "must": langFilter
+                                "must": [
+                                    {
+                                        "exists": {
+                                            "field": "vadis_data_2"
+                                        }
+                                    },
+                                    langFilter
+                                ]
                             }
                         },
                         "sort": [

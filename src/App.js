@@ -43,12 +43,12 @@ class App extends Component {
             id: id,
         })
         if (id && id !== 'null') {
-            // window.open('http://localhost:3000/' + id, '_self')
-            window.open('https://demo-vadis.gesis.org:443/' + id, '_self')
+            window.open('/' + id, '_self')
+            // window.open('https://demo-vadis.gesis.org:443/' + id, '_self')
         }
         else{
-            // window.open('http://localhost:3000/', '_self')
-            window.open('https://demo-vadis.gesis.org:443/', '_self')
+            window.open('/', '_self')
+            // window.open('https://demo-vadis.gesis.org:443/', '_self')
         }
     }
 

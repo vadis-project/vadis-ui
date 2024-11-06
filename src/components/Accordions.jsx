@@ -304,17 +304,17 @@ class Accordions extends Component {
                                             : null
                                     }
                                 </AccordionItemPanel>
-                                {
-                                    this.props.data_key ==="vadis_data" && key_val[0] === 'variable_sentences'?
-                                        <div className="d-flex justify-content-center">
-                                            <button type="button" className="btn btn-link bg-color"
-                                                    disabled={range_values[2][0] <= 0.5 || sentences_within_range_count[key_val_ind] === key_val[1].length}
-                                                    onClick={() => range_values[2][0] > 0.5 ? this.handleChange([Number((range_values[2][0] - 0.25).toFixed(1)), 1.0], key_val[0], key_val_ind) : null}>
-                                                Show more sentences
-                                            </button>
-                                        </div>
-                                    : null
-                                }
+                                {/*{*/}
+                                {/*    this.props.data_key ==="vadis_data_2" && key_val[0] === 'variable_sentences'?*/}
+                                {/*        <div className="d-flex justify-content-center">*/}
+                                {/*            <button type="button" className="btn btn-link bg-color"*/}
+                                {/*                    disabled={range_values[5][0] <= 0 || sentences_within_range_count[key_val_ind] === key_val[1].length}*/}
+                                {/*                    onClick={() => range_values[5][0] > 0 ? this.handleChange([Number((range_values[5][0] - 0.50).toFixed(1)), 1.0], key_val[0], key_val_ind) : null}>*/}
+                                {/*                Show more sentences*/}
+                                {/*            </button>*/}
+                                {/*        </div>*/}
+                                {/*    : null*/}
+                                {/*}*/}
                             </AccordionItem>
                         </Accordion>
                         : null
