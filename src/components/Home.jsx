@@ -17,7 +17,7 @@ class Home extends Component {
             hits_count: null,
             from: 0,
             size: 5,
-            sort_filter: 'year_desc_ids',
+            sort_filter: 'vs_count_desc_ids',
             searched: false,
             search_query: null,
             // vadis_app_endpoint: 'https://demo-vadis.gesis.org/vadis_app?doc_id=',
@@ -189,7 +189,7 @@ class Home extends Component {
         let noResult = this.state.hits_count === 0 && this.state.searched
         if(this.state.sort_filter==='relevance' && !this.state.search_query) // update filter to 'year' if the search query gets cleared while 'relevance' selected as filter
         {
-            this.sortBy('year_desc_ids')
+            this.sortBy('vs_count_desc_ids')
         }
         return (
             <>
